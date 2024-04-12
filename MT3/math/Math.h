@@ -1,24 +1,24 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Vector3.h"
 
-///- ‰ÁZ
-Vector3 Add(const Vector3& v1, const Vector3& v2);
+///- åŠ ç®—
+Vec3f Add(const Vec3f& v1, const Vec3f& v2);
 
-///- Œ¸Z
-Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+///- æ¸›ç®—
+Vec3f Subtract(const Vec3f& v1, const Vec3f& v2);
 
-///- ƒXƒJƒ‰[”{
-Vector3 Multiply(float scaler, const Vector3& v);
+///- ã‚¹ã‚«ãƒ©ãƒ¼å€
+Vec3f Multiply(float scaler, const Vec3f& v);
 
-///- “àÏ
-float Dot(const Vector3& v1, const Vector3& v2);
+///- å†…ç©
+float Dot(const Vec3f& v1, const Vec3f& v2);
 
-///- ’·‚³
-float Length(const Vector3& v);
+///- é•·ã•
+float Length(const Vec3f& v);
 
-///- ³‹K‰»
-Vector3 Normalize(const Vector3& v);
+///- æ­£è¦åŒ–
+Vec3f Normalize(const Vec3f& v);
 
 static const int kColumnWidth = 60;
-void VectorScreenPrintf(const Vector3& pos, const Vector3& vector, const char* label);
+void VectorScreenPrintf(const Vec3f& pos, const Vec3f& vector, const char* label);
