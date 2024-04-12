@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include "Vector3.h"
+#include "Vector2.h"
+#include "Matrix4x4.h"
+#include <string>
 
 ///- 加算
 Vec3f Add(const Vec3f& v1, const Vec3f& v2);
@@ -20,5 +23,27 @@ float Length(const Vec3f& v);
 ///- 正規化
 Vec3f Normalize(const Vec3f& v);
 
-static const int kColumnWidth = 60;
-void VectorScreenPrintf(const Vec3f& pos, const Vec3f& vector, const char* label);
+void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label);
+
+
+
+///- 加算
+Mat4 Add(const Mat4& m1, const Mat4& m2);
+
+///- 減算
+Mat4 Subtract(const Mat4& m1, const Mat4& m2);
+
+///- 積
+Mat4 Multiply(const Mat4& m1, const Mat4& m2);
+
+///- 逆行列
+Mat4 Inverse(const Mat4& m);
+
+///- 転置行列
+Mat4 Transpose(const Mat4& m);
+
+///- 単位行列の生成
+Mat4 MakeIdentity4x4();
+
+///- 行列のデバッグ表示
+void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string& label);
