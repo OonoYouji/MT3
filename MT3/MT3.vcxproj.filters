@@ -53,6 +53,9 @@
     <ClCompile Include="math\Math.cpp">
       <Filter>source\math</Filter>
     </ClCompile>
+    <ClCompile Include="math\Matrix4x4.cpp">
+      <Filter>source\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
