@@ -16,29 +16,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Mat4 m1 = {
-		3.2f, 0.7f, 9.6f, 4.4f,
-		5.5f, 1.3f, 7.8f, 2.1f,
-		6.9f, 8.0f, 2.6f, 1.0f,
-		0.5f, 7.2f, 5.1f, 3.3f
+	Vec3f translate{ 4.1f, 2.6f, 0.8f };
+	Vec3f scale{ 1.5f,5.2f,7.3f };
+	Mat4 translateMatrix = Mat4::MakeTranslate(translate);
+	Mat4 scaleMatrix = Mat4::MakeScale(scale);
+	Vec3f point{ 2.3f,3.8f, 1.4f };
+	Mat4 transformMatrix = {
+		1.0f, 2.0f, 3.0f, 4.0f,
+		3.0f, 1.0f, 1.0f, 2.0f,
+		1.0f, 4.0f, 2.0f, 3.0f,
+		2.0f, 2.0f, 1.0f, 3.0f
 	};
-
-	Mat4 m2 = {
-		4.1f, 6.5f, 3.3f, 2.2f,
-		8.8f, 0.6f, 9.9f, 7.7f,
-		1.1f, 5.5f, 6.6f, 0.0f,
-		3.3f, 9.9f, 8.8f, 2.2f
-	};
-
-	///- 計算結果
-	Mat4 resultAdd = Add(m1, m2);
-	Mat4 resultMultiply = Multiply(m1, m2);
-	Mat4 resultSubtract = Subtract(m1, m2);
-	Mat4 inverseM1 = Inverse(m1);
-	Mat4 inverseM2 = Inverse(m2);
-	Mat4 transposeM1 = Transpose(m1);
-	Mat4 transposeM2 = Transpose(m2);
-	Mat4 identity = MakeIdentity4x4();
+	Vec3f transformed = Mat4::Transform(point, transformMatrix);
 
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -63,14 +52,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		///- 計算結果の表示
-		MatrixScreenPrintf({ 0.0f,0.0f }, resultAdd, "Add");
-		MatrixScreenPrintf({ 0.0f,100.0f * 1 }, resultSubtract, "Subtract");
-		MatrixScreenPrintf({ 0.0f,100.0f * 2 }, resultMultiply, "Multiply");
-		MatrixScreenPrintf({ 0.0f,100.0f * 3 }, inverseM1, "inverseM1");
-		MatrixScreenPrintf({ 0.0f,100.0f * 4 }, inverseM2, "inverseM2");
-		MatrixScreenPrintf({ 300.0f,0.0f }, transposeM1, "transposeM1");
-		MatrixScreenPrintf({ 300.0f,100.0f * 1 }, transposeM2, "transposeM2");
-		MatrixScreenPrintf({ 300.0f,100.0f * 2 }, identity, "identity");
+		VectorScreenPrintf({ 0.0f,0.0f }, transformed, "transformed");
+		MatrixScreenPrintf({ 0.0f, 20.0f }, translateMatrix, "translateMatrix");
+		MatrixScreenPrintf({ 0.0f, 120.0f }, scaleMatrix, "scaleMatrix");
 
 		///
 		/// ↑描画処理ここまで
