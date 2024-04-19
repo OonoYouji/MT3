@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "3D/Camera.h"
+#include "3D/Grid.h"
 
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -117,6 +118,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
+
+		Grid::GetInstance()->Draw(camera.get());
 
 		if(dot < 0) {
 
