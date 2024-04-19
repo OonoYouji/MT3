@@ -2,6 +2,15 @@
 #include <cassert>
 #include <cmath>
 
+namespace {
+
+	float Cot(float t) {
+		return 1.0f / std::tan(t);
+	}
+
+} ///- namespace
+
+
 Matrix4x4 Matrix4x4::MakeIdentity() {
 	return {
 		1.0f,0.0f,0.0f,0.0f,
@@ -131,4 +140,31 @@ Matrix4x4 Matrix4x4::MakeTranspose(const Matrix4x4& m) {
 		}
 	}
 	return result;
+}
+
+Matrix4x4 Matrix4x4::MakePerspectiveFov(float fovY, float aspectRatio, float nearClip, float farClip) {
+	return Matrix4x4{
+		(1 / aspectRatio) * Cot(fovY / 2.0f), 0.0f, 0.0f, 0.0f,
+		0.0f, Cot(fovY / 2.0f), 0.0f, 0.0f,
+		0.0f, 0.0f, farClip / (farClip - nearClip), 1.0f,
+		0.0f, 0.0f, (-nearClip * farClip) / (farClip - nearClip), 0.0f
+	};
+}
+
+Matrix4x4 Matrix4x4::MakeOrthographic(float l, float t, float r, float b, float nearClip, float farClip) {
+	return Matrix4x4{
+		2.0f / (r - l), 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / (t - b), 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f / (farClip - nearClip), 0.0f,
+		(l + r) / (l - r), (t + b) / (b - t), nearClip / (nearClip - farClip), 1.0f
+	};
+}
+
+Matrix4x4 Matrix4x4::MakeViewport(float top, float left, float width, float height, float minD, float maxD) {
+	return Matrix4x4{
+		width / 2.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -(height / 2.0f), 0.0f, 0.0f,
+		0.0f, 0.0f, maxD - minD, 0.0f,
+		left + (width / 2.0f), top + (height / 2.0f), minD, 1.0f
+	};
 }

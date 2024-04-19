@@ -17,10 +17,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = { 0 };
 
 
-	Vec3f scale = { 1.2f,0.79f,-2.1f };
-	Vec3f rotate = { 0.4f,1.43f,-0.8f };
-	Vec3f translate = { 2.7f,-4.15f,1.57f };
-	Mat4 worldMatrix = Mat4::MakeAffine(scale, rotate, translate);
+	Mat4 orthographicMatrix = Mat4::MakeOrthographic(-160.0f, 160.0f, 200.0f, 300.0f, 0.0f, 1000.0f);
+	Mat4 perspectiveFovMatrix = Mat4::MakePerspectiveFov(0.63f, 1.33f, 0.1f, 1000.0f);
+	Mat4 viewportMatrix = Mat4::MakeViewport(200.0f, 100.0f, 600.0f, 300.0f, 0.0f, 1.0f);
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -44,7 +44,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		///- 計算結果の表示
-		MatrixScreenPrintf({ 0.0f, 0.0f }, worldMatrix, "worldMatrix");
+		MatrixScreenPrintf({ 0.0f, 0.0f }, orthographicMatrix, "orthographicMatrix");
+		MatrixScreenPrintf({ 0.0f, 100.0f }, perspectiveFovMatrix, "perspectiveFovMatrix");
+		MatrixScreenPrintf({ 0.0f, 200.0f }, viewportMatrix, "viewportMatrix");
 
 
 		///
