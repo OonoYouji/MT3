@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
 
-		Grid::GetInstance()->Draw(camera.get());
+		Grid::GetInstance()->Draw(*camera.get());
 
 		if(dot < 0) {
 
