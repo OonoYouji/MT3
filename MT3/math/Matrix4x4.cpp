@@ -1,6 +1,6 @@
 ﻿#include "Matrix4x4.h"
 #include <cassert>
-
+#include <cmath>
 
 Matrix4x4 Matrix4x4::MakeIdentity() {
 	return {
@@ -27,6 +27,40 @@ Matrix4x4 Matrix4x4::MakeScale(const Vec3f& scale) {
 		0.0f, 0.0f, scale.z, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
+}
+
+Matrix4x4 Matrix4x4::MakeRotateX(float theta) {
+	return {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, std::cosf(theta), std::sinf(theta), 0.0f,
+		0.0f, -std::sinf(theta) , std::cosf(theta) , 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+}
+
+Matrix4x4 Matrix4x4::MakeRotateY(float theta) {
+	return {
+		std::cosf(theta), 0.0f, -std::sinf(theta), 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		std::sinf(theta), 0.0f, std::cosf(theta), 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+}
+
+Matrix4x4 Matrix4x4::MakeRotateZ(float theta) {
+	return {
+		std::cosf(theta), std::sinf(theta), 0.0f, 0.0f,
+		-std::sinf(theta), std::cosf(theta), 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+}
+
+Matrix4x4 Matrix4x4::MakeRotate(const Vec3f& rotate) {
+	Mat4 x = MakeRotateX(rotate.x);
+	Mat4 y = MakeRotateY(rotate.y);
+	Mat4 z = MakeRotateZ(rotate.z);
+	return x * y * z;
 }
 
 Vec3f Matrix4x4::Transform(const Vec3f& v, const Matrix4x4& m) {
