@@ -10,6 +10,7 @@
 
 #include "3D/Camera.h"
 #include "3D/Grid.h"
+#include "3D/Sphere.h"
 
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -27,9 +28,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Vec3f v1 = { 1.2f, -3.9f, 2.5f };
-	Vec3f v2 = { 2.8f, 0.4f, -1.3f };
-	Vec3f cross = Cross(v1, v2);
+	std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>();
+	sphere->Init();
 
 	Vec3f rotate = { 0.0f,0.0f,0.0f };
 	Vec3f translate = { 0.0f,0.0f,0.0f };
@@ -53,6 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		worldVertices[i] = Mat4::Transform(kLocalVertices[i], worldMatrix);
 	}
 
+	Vec3f cross = Cross(worldVertices[0], worldVertices[1]);
 	float dot = Dot(Normalize(camera->GetPosition() - translate), cross);
 
 	int frameCount = 0;
@@ -87,6 +88,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
+		///- スフィアの更新
+		sphere->Update();
 
 		rotate.y += 1.0f / 64.0f;
 
@@ -120,10 +123,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
 
 		Grid::GetInstance()->Draw(*camera.get());
+		sphere->Draw(*camera.get());
+
 
 		if(dot < 0) {
 
-			Novice::DrawTriangle(
+			/*Novice::DrawTriangle(
 				static_cast<int>(screenVertices[0].x),
 				static_cast<int>(screenVertices[0].y),
 				static_cast<int>(screenVertices[1].x),
@@ -132,7 +137,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				static_cast<int>(screenVertices[2].y),
 				RED,
 				kFillModeSolid
-			);
+			);*/
 		}
 
 		///
