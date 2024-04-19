@@ -17,10 +17,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = { 0 };
 
 
-	Vec3f v1 = { 1.2f, -3.9f, 2.5f };
-	Vec3f v2 = { 2.8f, 0.4f, -1.3f };
-	Vec3f cross = Cross(v1, v2);
-
+	Vec3f scale = { 1.2f,0.79f,-2.1f };
+	Vec3f rotate = { 0.4f,1.43f,-0.8f };
+	Vec3f translate = { 2.7f,-4.15f,1.57f };
+	Mat4 worldMatrix = Mat4::MakeAffine(scale, rotate, translate);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		///- 計算結果の表示
-		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
+		MatrixScreenPrintf({ 0.0f, 0.0f }, worldMatrix, "worldMatrix");
 
 
 		///
