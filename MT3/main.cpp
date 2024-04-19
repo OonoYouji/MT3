@@ -3,8 +3,13 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "math/Math.h"
-#include <cmath>
 #include <ImGuiManager.h>
+
+#include <cmath>
+#include <memory>
+
+#include "3D/Camera.h"
+
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
@@ -18,6 +23,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
+	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
+	camera->Init();
 
 	Vec3f v1 = { 1.2f, -3.9f, 2.5f };
 	Vec3f v2 = { 2.8f, 0.4f, -1.3f };
@@ -27,24 +34,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vec3f translate = { 0.0f,0.0f,0.0f };
 	Mat4 worldMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, rotate, translate);
 
-	Vec3f cameraPosition = { 0.0f,0.0f,-5.0f };
-	Mat4 cameraMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, cameraPosition);
-	Mat4 viewMatrix = Mat4::MakeInverse(cameraMatrix);
-	Mat4 projectionMatrix = Mat4::MakePerspectiveFov(0.45f, 1280.0f / 720.0f, 0.1f, 100.0f);
-	Mat4 viewportMatrix = Mat4::MakeViewport(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 1.0f);
-	Mat4 vpMatrix = viewMatrix * projectionMatrix;
-
 	const Vec3f kLocalVertices[3] = {
 		{ 0.0f, 0.5f, 0.0f},
 		{ -0.5f, -0.5f, 0.0f},
 		{ 0.5f, -0.5f, 0.0f}
 	};
 
-	Mat4 wvpMatrix = worldMatrix * vpMatrix;
+	Mat4 wvpMatrix = worldMatrix * camera->GetMatVp();
 	Vec3f screenVertices[3];
 	for(uint32_t i = 0; i < 3; i++) {
 		Vec3f ndcVertex = Mat4::Transform(kLocalVertices[i], wvpMatrix);
-		screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
+		screenVertices[i] = Mat4::Transform(ndcVertex, camera->GetMatViewport());
 	}
 
 	Vec3f worldVertices[3];
@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		worldVertices[i] = Mat4::Transform(kLocalVertices[i], worldMatrix);
 	}
 
-	float dot = Dot(Normalize(cameraPosition - translate), cross);
+	float dot = Dot(Normalize(camera->GetPosition() - translate), cross);
 
 	int frameCount = 0;
 
@@ -83,6 +83,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		frameCount++;
 
+		///- カメラの更新
+		camera->Update();
+
+
 		rotate.y += 1.0f / 64.0f;
 
 		//translate.z = std::sin(float(frameCount) / 10.0f);
@@ -94,15 +98,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		///- screen座標系
-		wvpMatrix = worldMatrix * vpMatrix;
+		wvpMatrix = worldMatrix * camera->GetMatVp();
 		for(uint32_t i = 0; i < 3; i++) {
 			Vec3f ndcVertex = Mat4::Transform(kLocalVertices[i], wvpMatrix);
-			screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
+			screenVertices[i] = Mat4::Transform(ndcVertex, camera->GetMatViewport());
 		}
 
 		///- 外積の計算
 		cross = Cross(worldVertices[0], worldVertices[1]);
-		dot = Dot(Normalize(cameraPosition - translate), cross);
+		dot = Dot(Normalize(camera->GetPosition() - translate), cross);
 
 		///
 		/// ↑更新処理ここまで
