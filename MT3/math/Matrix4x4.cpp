@@ -63,6 +63,13 @@ Matrix4x4 Matrix4x4::MakeRotate(const Vec3f& rotate) {
 	return x * y * z;
 }
 
+Matrix4x4 Matrix4x4::MakeAffine(const Vec3f& scale, const Vec3f& rotate, const Vec3f& translate) {
+	Mat4 matScale = MakeScale(scale);
+	Mat4 matRotate = MakeRotate(rotate);
+	Mat4 matTranslate = MakeTranslate(translate);
+	return matScale * matRotate * matTranslate;
+}
+
 Vec3f Matrix4x4::Transform(const Vec3f& v, const Matrix4x4& m) {
 	//w=1がデカルト座標系であるので(x,y,1)のベクトルとしてmatrixとの積をとる
 	Vec3f result{ 0.0f,0.0f,0.0f };

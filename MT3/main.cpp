@@ -17,11 +17,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = { 0 };
 
 
-	Vec3f rotate = { 0.4f, 1.43f, -0.8f };
-	Mat4 rotateXMatrix = Mat4::MakeRotateX(rotate.x);
-	Mat4 rotateYMatrix = Mat4::MakeRotateY(rotate.y);
-	Mat4 rotateZMatrix = Mat4::MakeRotateZ(rotate.z);
-	Mat4 rotateXYZMatrix = rotateXMatrix * (rotateYMatrix * rotateZMatrix);
+	Vec3f scale = { 1.2f,0.79f,-2.1f };
+	Vec3f rotate = { 0.4f,1.43f,-0.8f };
+	Vec3f translate = { 2.7f,-4.15f,1.57f };
+	Mat4 worldMatrix = Mat4::MakeAffine(scale, rotate, translate);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -45,10 +44,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		///- 計算結果の表示
-		MatrixScreenPrintf({ 0.0f, 0.0f }, rotateXMatrix, "rotateXMatrix");
-		MatrixScreenPrintf({ 0.0f, 100.0f }, rotateYMatrix, "rotateYMatrix");
-		MatrixScreenPrintf({ 0.0f, 200.0f }, rotateZMatrix, "rotateZMatrix");
-		MatrixScreenPrintf({ 0.0f, 300.0f }, rotateXYZMatrix, "rotateXYZMatrix");
+		MatrixScreenPrintf({ 0.0f, 0.0f }, worldMatrix, "worldMatrix");
+
 
 		///
 		/// ↑描画処理ここまで
