@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "math/Math.h"
+#include <cmath>
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
@@ -17,10 +18,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char preKeys[256] = { 0 };
 
 
-	Vec3f scale = { 1.2f,0.79f,-2.1f };
-	Vec3f rotate = { 0.4f,1.43f,-0.8f };
-	Vec3f translate = { 2.7f,-4.15f,1.57f };
-	Mat4 worldMatrix = Mat4::MakeAffine(scale, rotate, translate);
+	Vec3f v1 = { 1.2f, -3.9f, 2.5f };
+	Vec3f v2 = { 2.8f, 0.4f, -1.3f };
+	Vec3f cross = Cross(v1, v2);
+
+	Vec3f rotate = { 0.0f,0.0f,0.0f };
+	Vec3f translate = { 0.0f,0.0f,0.0f };
+	Mat4 worldMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, rotate, translate);
+
+	Vec3f cameraPosition = { 0.0f,0.0f,-5.0f };
+	Mat4 cameraMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, cameraPosition);
+	Mat4 viewMatrix = Mat4::MakeInverse(cameraMatrix);
+	Mat4 projectionMatrix = Mat4::MakePerspectiveFov(0.45f, 1280.0f / 720.0f, 0.1f, 100.0f);
+	Mat4 viewportMatrix = Mat4::MakeViewport(0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 1.0f);
+	Mat4 vpMatrix = viewMatrix * projectionMatrix;
+
+	const Vec3f kLocalVertices[3] = {
+		{ 0.0f, 0.5f, 0.0f},
+		{ -0.5f, -0.5f, 0.0f},
+		{ 0.5f, -0.5f, 0.0f}
+	};
+
+	Mat4 wvpMatrix = worldMatrix * vpMatrix;
+	Vec3f screenVertices[3];
+	for(uint32_t i = 0; i < 3; i++) {
+		Vec3f ndcVertex = Mat4::Transform(kLocalVertices[i], wvpMatrix);
+		screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
+	}
+
+	int frameCount = 0;
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -34,6 +61,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+		frameCount++;
+
+		rotate.y += 1.0f / 64.0f;
+
+		//translate.z = std::sin(float(frameCount) / 10.0f);
+		worldMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, rotate, translate);
+
+		wvpMatrix = worldMatrix * vpMatrix;
+		for(uint32_t i = 0; i < 3; i++) {
+			Vec3f ndcVertex = Mat4::Transform(kLocalVertices[i], wvpMatrix);
+			screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
+		}
+
 
 		///
 		/// ↑更新処理ここまで
@@ -43,9 +83,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		///- 計算結果の表示
-		MatrixScreenPrintf({ 0.0f, 0.0f }, worldMatrix, "worldMatrix");
+		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
 
+		Novice::DrawTriangle(
+			static_cast<int>(screenVertices[0].x),
+			static_cast<int>(screenVertices[0].y),
+			static_cast<int>(screenVertices[1].x),
+			static_cast<int>(screenVertices[1].y),
+			static_cast<int>(screenVertices[2].x),
+			static_cast<int>(screenVertices[2].y),
+			RED,
+			kFillModeSolid
+		);
 
 		///
 		/// ↑描画処理ここまで
