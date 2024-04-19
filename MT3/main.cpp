@@ -4,6 +4,7 @@
 #include "Matrix4x4.h"
 #include "math/Math.h"
 #include <cmath>
+#include <ImGuiManager.h>
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
@@ -46,6 +47,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
 	}
 
+	Vec3f worldVertices[3];
+	for(uint32_t i = 0; i < 3; i++) {
+		worldVertices[i] = Mat4::Transform(kLocalVertices[i], worldMatrix);
+	}
+
+	float dot = Dot(Normalize(cameraPosition - translate), cross);
+
 	int frameCount = 0;
 
 
@@ -58,6 +66,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		memcpy(preKeys, keys, 256);
 		Novice::GetHitKeyStateAll(keys);
 
+#ifdef _DEBUG
+
+		ImGui::Begin("triangle");
+
+		ImGui::DragFloat3("rotate", &rotate.x, 0.25f);
+
+		ImGui::End();
+
+#endif // _DEBUG
+
+
+
 		///
 		/// ↓更新処理ここから
 		///
@@ -68,12 +88,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//translate.z = std::sin(float(frameCount) / 10.0f);
 		worldMatrix = Mat4::MakeAffine({ 1.0f,1.0f,1.0f }, rotate, translate);
 
+		///- world座標系
+		for(uint32_t i = 0; i < 3; i++) {
+			worldVertices[i] = Mat4::Transform(kLocalVertices[i], worldMatrix);
+		}
+
+		///- screen座標系
 		wvpMatrix = worldMatrix * vpMatrix;
 		for(uint32_t i = 0; i < 3; i++) {
 			Vec3f ndcVertex = Mat4::Transform(kLocalVertices[i], wvpMatrix);
 			screenVertices[i] = Mat4::Transform(ndcVertex, viewportMatrix);
 		}
 
+		///- 外積の計算
+		cross = Cross(worldVertices[0], worldVertices[1]);
+		dot = Dot(Normalize(cameraPosition - translate), cross);
 
 		///
 		/// ↑更新処理ここまで
@@ -85,16 +114,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		VectorScreenPrintf({ 0.0f,0.0f }, cross, "cross");
 
-		Novice::DrawTriangle(
-			static_cast<int>(screenVertices[0].x),
-			static_cast<int>(screenVertices[0].y),
-			static_cast<int>(screenVertices[1].x),
-			static_cast<int>(screenVertices[1].y),
-			static_cast<int>(screenVertices[2].x),
-			static_cast<int>(screenVertices[2].y),
-			RED,
-			kFillModeSolid
-		);
+		if(dot < 0) {
+
+			Novice::DrawTriangle(
+				static_cast<int>(screenVertices[0].x),
+				static_cast<int>(screenVertices[0].y),
+				static_cast<int>(screenVertices[1].x),
+				static_cast<int>(screenVertices[1].y),
+				static_cast<int>(screenVertices[2].x),
+				static_cast<int>(screenVertices[2].y),
+				RED,
+				kFillModeSolid
+			);
+		}
 
 		///
 		/// ↑描画処理ここまで
