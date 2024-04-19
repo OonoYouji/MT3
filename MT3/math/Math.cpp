@@ -31,6 +31,14 @@ Vec3f Normalize(const Vec3f& v) {
 	return v;
 }
 
+Vec3f Cross(const Vec3f& v1, const Vec3f& v2) {
+	return Vec3f{
+		v1.y * v2.z - v1.z * v2.y,
+		v1.z * v2.x - v1.x * v2.z,
+		v1.x * v2.y - v1.y * v2.x
+	};
+}
+
 void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label) {
 	static const int kColumnWidth = 60;
 	Novice::ScreenPrintf(static_cast<int>(pos.x), static_cast<int>(pos.y), "%0.2f", vector.x);

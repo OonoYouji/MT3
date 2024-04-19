@@ -23,6 +23,9 @@ float Length(const Vec3f& v);
 ///- 正規化
 Vec3f Normalize(const Vec3f& v);
 
+///- クロス積
+Vec3f Cross(const Vec3f& v1, const Vec3f& v2);
+
 void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label);
 
 
