@@ -74,12 +74,10 @@
     <ClCompile Include="3D\Grid.cpp">
       <Filter>source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp">
-      <Filter>source\3D</Filter>
-    </ClCompile>
     <ClCompile Include="3D\Sphere.cpp">
       <Filter>source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
