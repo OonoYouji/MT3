@@ -26,6 +26,18 @@
     <Filter Include="source\math">
       <UniqueIdentifier>{683871ab-6dc2-4e60-900b-f90bcdb1a391}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\collision">
+      <UniqueIdentifier>{4de384b4-b11a-4bd4-a028-a2873a2efb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\collision">
+      <UniqueIdentifier>{e4fd2b7f-3b1e-48f4-ba03-3b54a51d4370}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\3D">
+      <UniqueIdentifier>{e1549323-2e3d-484a-b36d-1dfea1835312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\3D">
+      <UniqueIdentifier>{16a4b536-a9f1-49fb-962c-5fcb2fef0129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -44,9 +56,6 @@
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp">
       <Filter>KamataEngine\Adapter</Filter>
     </ClCompile>
-    <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp">
-      <Filter>KamataEngine</Filter>
-    </ClCompile>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\StringUtility.cpp">
       <Filter>KamataEngine\Source</Filter>
     </ClCompile>
@@ -55,6 +64,21 @@
     </ClCompile>
     <ClCompile Include="math\Matrix4x4.cpp">
       <Filter>source\math</Filter>
+    </ClCompile>
+    <ClCompile Include="collision\Collision.cpp">
+      <Filter>source\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Camera.cpp">
+      <Filter>source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Grid.cpp">
+      <Filter>source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp">
+      <Filter>source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Sphere.cpp">
+      <Filter>source\3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +163,18 @@
     </ClInclude>
     <ClInclude Include="math\Math.h">
       <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="collision\Collision.h">
+      <Filter>include\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Grid.h">
+      <Filter>include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Camera.h">
+      <Filter>include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Sphere.h">
+      <Filter>include\3D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
