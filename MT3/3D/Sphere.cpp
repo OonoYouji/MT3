@@ -25,14 +25,8 @@ void Sphere::Init() {
 
 
 void Sphere::Update() {
-#ifdef _DEBUG
-	ImGui::Begin("Sphere");
 
-	ImGui::DragFloat3("rotate", &rotate_.x, 0.01f);
-	ImGui::DragFloat3("center", &center_.x, 0.1f);
 
-	ImGui::End();
-#endif // _DEBUG
 
 
 }
@@ -58,23 +52,23 @@ void Sphere::Draw(const Camera& camera) {
 
 			// a
 			point[0] = {
-				(std::cosf(lat) * std::cosf(lon)) * radius_,
-				(std::sinf(lat)) * radius_,
-				(std::cosf(lat) * std::sinf(lon)) * radius_
+				(std::cos(lat) * std::cos(lon)) * radius_,
+				(std::sin(lat)) * radius_,
+				(std::cos(lat) * std::sin(lon)) * radius_
 			};
 
 			// b
 			point[1] = {
-				(std::cosf(lat + kLatEvery) * std::cosf(lon)) * radius_,
-				(std::sinf(lat + kLatEvery)) * radius_,
-				(std::cosf(lat + kLatEvery) * std::sinf(lon)) * radius_
+				(std::cos(lat + kLatEvery) * std::cos(lon)) * radius_,
+				(std::sin(lat + kLatEvery)) * radius_,
+				(std::cos(lat + kLatEvery) * std::sin(lon)) * radius_
 			};
 
 			// c
 			point[2] = {
-				(std::cosf(lat) * std::cosf(lon + kLonEvery)) * radius_,
-				(std::sinf(lat)) * radius_,
-				(std::cosf(lat) * std::sinf(lon + kLonEvery)) * radius_
+				(std::cos(lat) * std::cos(lon + kLonEvery)) * radius_,
+				(std::sin(lat)) * radius_,
+				(std::cos(lat) * std::sin(lon + kLonEvery)) * radius_
 			};
 
 			// screen座標系まで変換
@@ -107,4 +101,34 @@ void Sphere::Draw(const Camera& camera) {
 
 	}
 
+}
+
+
+
+void Sphere::DebugDraw(const std::string& windowName) {
+	ImGui::Begin(windowName.c_str());
+
+
+	///- 拡縮; 回転; 平行移動量
+	if(ImGui::TreeNodeEx("Transform", true)) {
+
+		//ImGui::DragFloat3("Scale", &scale_.x, 0.05f);
+		ImGui::DragFloat3("Rotate", &rotate_.x, 0.05f);
+		ImGui::DragFloat3("Translate", &center_.x, 0.05f);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Spacing();
+
+	///- 各種パラメータ
+	if(ImGui::TreeNodeEx("Parameters", true)) {
+
+		ImGui::DragFloat("Radius", &radius_, 0.05f);
+
+		ImGui::TreePop();
+	}
+
+
+	ImGui::End();
 }

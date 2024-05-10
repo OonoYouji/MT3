@@ -42,25 +42,25 @@ Matrix4x4 Matrix4x4::MakeScale(const Vec3f& scale) {
 Matrix4x4 Matrix4x4::MakeRotateX(float theta) {
 	return {
 		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, std::cosf(theta), std::sinf(theta), 0.0f,
-		0.0f, -std::sinf(theta) , std::cosf(theta) , 0.0f,
+		0.0f, std::cos(theta), std::sin(theta), 0.0f,
+		0.0f, -std::sin(theta) , std::cos(theta) , 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 }
 
 Matrix4x4 Matrix4x4::MakeRotateY(float theta) {
 	return {
-		std::cosf(theta), 0.0f, -std::sinf(theta), 0.0f,
+		std::cos(theta), 0.0f, -std::sin(theta), 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
-		std::sinf(theta), 0.0f, std::cosf(theta), 0.0f,
+		std::sin(theta), 0.0f, std::cos(theta), 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 }
 
 Matrix4x4 Matrix4x4::MakeRotateZ(float theta) {
 	return {
-		std::cosf(theta), std::sinf(theta), 0.0f, 0.0f,
-		-std::sinf(theta), std::cosf(theta), 0.0f, 0.0f,
+		std::cos(theta), std::sin(theta), 0.0f, 0.0f,
+		-std::sin(theta), std::cos(theta), 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
