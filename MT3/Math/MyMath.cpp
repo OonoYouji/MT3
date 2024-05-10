@@ -125,6 +125,16 @@ void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string&
 	}
 }
 
+void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color) {
+	Novice::DrawLine(
+		static_cast<int>(v1.x),
+		static_cast<int>(v1.y),
+		static_cast<int>(v2.x),
+		static_cast<int>(v2.y),
+		color
+	);
+}
+
 Vec3f Project(const Vec3f& v1, const Vec3f& v2) {
 	Vec3f normalizeV2 = Normalize(v2);
 	float dot = Dot(v1, normalizeV2);
@@ -133,4 +143,11 @@ Vec3f Project(const Vec3f& v1, const Vec3f& v2) {
 
 Vec3f ClosestPoint(const Vec3f& point, const Segment& segment) {
 	return segment.origin + Project(point - segment.origin, segment.diff);
+}
+
+Vec3f Perpendiculer(const Vec3f& vector) {
+	if(vector.x != 0.0f || vector.y != 0.0f) {
+		return Vec3f(-vector.y, vector.x, 0.0f);
+	}
+	return Vec3f(0.0f, -vector.z, vector.y);
 }

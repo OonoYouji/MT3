@@ -12,6 +12,7 @@
 #include "Grid.h"
 #include "Sphere.h"
 #include "Line.h"
+#include "Plane.h"
 #include "Collision.h"
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -30,11 +31,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	camera->Init();
 
 
-	std::unique_ptr<Sphere> sphere[2];
-	for(uint8_t i = 0; i < 2; i++) {
-		sphere[i] = std::make_unique<Sphere>();
-		sphere[i]->Init();
-	}
+	std::unique_ptr<Sphere> sphere;
+	sphere = std::make_unique<Sphere>();
+	sphere->Init();
+
+	Plane plane;
+	plane.normal = Vec3f(0.0f, 1.0f, 0.0f);
+	plane.distance = 0.0f;
 
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -56,18 +59,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		sphere[0]->DebugDraw("SphereA");
-		sphere[1]->DebugDraw("SphereB");
+		sphere->DebugDraw("Sphere");
+		plane.DebugDraw("Plane");
 
-		if(IsCollision(*sphere[0].get(), *sphere[1].get())) {
-			for(uint8_t i = 0; i < 2; i++) {
-				sphere[i]->SetColor(RED);
-			}
+
+		if(IsCollision(*sphere.get(), plane)) {
+			sphere->SetColor(RED);
 		} else {
-			for(uint8_t i = 0; i < 2; i++) {
-				sphere[i]->SetColor(WHITE);
-			}
+			sphere->SetColor(WHITE);
 		}
+
 
 		///
 		/// ↑更新処理ここまで
@@ -79,10 +80,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		for(uint8_t i = 0; i < 2; i++) {
-			sphere[i]->Draw(*camera.get());
-		}
-
+		sphere->Draw(*camera.get());
+		plane.Draw(camera.get());
 
 		///
 		/// ↑描画処理ここまで

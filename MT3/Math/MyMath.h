@@ -54,8 +54,15 @@ Mat4 MakeIdentity4x4();
 void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string& label);
 
 
+void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color);
+
+
 ///- 正射影ベクトル
 Vec3f Project(const Vec3f& v1, const Vec3f& v2);
 
 ///- 最近接点を求める
 Vec3f ClosestPoint(const Vec3f& point, const Segment& segment);
+
+
+Vec3f Perpendiculer(const Vec3f& vector);
+
