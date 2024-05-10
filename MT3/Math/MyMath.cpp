@@ -124,3 +124,13 @@ void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string&
 		}
 	}
 }
+
+Vec3f Project(const Vec3f& v1, const Vec3f& v2) {
+	Vec3f normalizeV2 = Normalize(v2);
+	float dot = Dot(v1, normalizeV2);
+	return normalizeV2 * dot;
+}
+
+Vec3f ClosestPoint(const Vec3f& point, const Segment& segment) {
+	return segment.origin + Project(point - segment.origin, segment.diff);
+}

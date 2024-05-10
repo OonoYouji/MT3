@@ -1,9 +1,11 @@
 ﻿#pragma once
 
+#include <string>
+
 #include "Vector3.h"
 #include "Vector2.h"
 #include "Matrix4x4.h"
-#include <string>
+#include "Line.h"
 
 ///- 加算
 Vec3f Add(const Vec3f& v1, const Vec3f& v2);
@@ -50,3 +52,10 @@ Mat4 MakeIdentity4x4();
 
 ///- 行列のデバッグ表示
 void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string& label);
+
+
+///- 正射影ベクトル
+Vec3f Project(const Vec3f& v1, const Vec3f& v2);
+
+///- 最近接点を求める
+Vec3f ClosestPoint(const Vec3f& point, const Segment& segment);

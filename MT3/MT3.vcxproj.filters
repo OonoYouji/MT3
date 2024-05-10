@@ -78,6 +78,9 @@
       <Filter>source\3D</Filter>
     </ClCompile>
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
+    <ClCompile Include="3D\Line.cpp">
+      <Filter>source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -172,6 +175,9 @@
       <Filter>include\3D</Filter>
     </ClInclude>
     <ClInclude Include="3D\Sphere.h">
+      <Filter>include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Line.h">
       <Filter>include\3D</Filter>
     </ClInclude>
   </ItemGroup>

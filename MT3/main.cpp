@@ -8,9 +8,10 @@
 #include <cmath>
 #include <memory>
 
-#include "3D/Camera.h"
-#include "3D/Grid.h"
-#include "3D/Sphere.h"
+#include "Camera.h"
+#include "Grid.h"
+#include "Sphere.h"
+#include "Line.h"
 
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -28,13 +29,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	std::unique_ptr<Sphere> sphere[2];
+	Segment segment;
+	segment.origin = { -2.0f,-1.0f,0.0f };
+	segment.diff = { 3.0f,2.0f,2.0f };
+	Vec3f point = { -1.5f,0.6f, 0.6f };
 
-	for(uint8_t index = 0; index < 2; index++) {
-		sphere[index] = std::make_unique<Sphere>();
-		sphere[index]->Init();
+	Vec3f project = Project(point - segment.origin, segment.diff);
+	Vec3f closestPoint = ClosestPoint(point, segment);
+
+	std::unique_ptr<Sphere> sphere[2];
+	for(uint8_t i = 0; i < 2; i++) {
+		sphere[i] = std::make_unique<Sphere>();
 	}
 
+	sphere[0]->Init(point, 0.01f);
+	sphere[0]->SetColor(RED);
+	sphere[1]->Init(closestPoint, 0.01f);
+	sphere[1]->SetColor(BLACK);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -50,18 +61,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		
+
 
 		///- カメラの更新
 		camera->Update();
 
-		///- スフィアの更新
-		for(uint8_t index = 0; index < 2; index++) {
-			sphere[index]->Update();
-		}
+		sphere[0]->DebugDraw("Piont");
+		sphere[1]->DebugDraw("ClosestPoint");
 
-		sphere[0]->DebugDraw("SphereA");
-		sphere[0]->DebugDraw("SphereB");
+		segment.DebugDraw("Segment");
+
+
+
+
+		project = Project(point - segment.origin, segment.diff);
+		closestPoint = ClosestPoint(point, segment);
+
+		sphere[0]->Init(point, 0.01f);
+		sphere[0]->SetColor(RED);
+		sphere[1]->Init(closestPoint, 0.01f);
+		sphere[1]->SetColor(BLACK);
+
+
 
 		///
 		/// ↑更新処理ここまで
@@ -72,11 +93,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		Grid::GetInstance()->Draw(*camera.get());
-		
-		for(uint8_t index = 0; index < 2; index++) {
-			sphere[index]->Draw(*camera.get());
+
+
+		for(uint8_t i = 0; i < 2; i++) {
+			sphere[i]->Draw(*camera.get());
 		}
 
+		segment.Draw(camera.get());
 
 		///
 		/// ↑描画処理ここまで

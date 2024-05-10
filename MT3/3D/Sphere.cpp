@@ -22,6 +22,14 @@ void Sphere::Init() {
 
 }
 
+void Sphere::Init(const Vec3f& position, float radius) {
+	Init();
+
+	center_ = position;
+	radius_ = radius;
+
+}
+
 
 
 void Sphere::Update() {

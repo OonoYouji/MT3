@@ -13,6 +13,7 @@ public:
 	~Sphere();
 
 	void Init();
+	void Init(const Vec3f& position, float radius);
 	void Update();
 	void Draw(const Camera& camera);
 
@@ -33,5 +34,9 @@ public: ///- Getter
 
 	const Vec3f& GetPosition() const { return center_; }
 	float GetRadius() const { return radius_; }
+
+	void SetColor(uint32_t color) {
+		color_ = color;
+	}
 
 };
