@@ -18,7 +18,7 @@ void Line::DebugDraw(const std::string& windowName) {
 #endif // _DEBUG
 }
 
-void Line::Draw(const Camera* camera) {
+void Line::Draw(const Camera* camera, uint32_t color) {
 	Vec3f start = Mat4::Transform(Mat4::Transform(origin, camera->GetMatVp()), camera->GetMatViewport());
 	Vec3f end = Mat4::Transform(Mat4::Transform(origin + diff, camera->GetMatVp()), camera->GetMatViewport());
 
@@ -27,6 +27,6 @@ void Line::Draw(const Camera* camera) {
 		static_cast<int>(start.y),
 		static_cast<int>(end.x),
 		static_cast<int>(end.y),
-		0xFFFFFFFF
+		color
 	);
 }

@@ -30,10 +30,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-
-	std::unique_ptr<Sphere> sphere;
-	sphere = std::make_unique<Sphere>();
-	sphere->Init();
+	Segment segment;
+	segment.origin = Vec3f(0.0f, 0.0f, 0.0f);
+	segment.diff = Vec3f(1.0f, 1.0f, 1.0f);
+	uint32_t color = 0xffffffff;
 
 	Plane plane;
 	plane.normal = Vec3f(0.0f, 1.0f, 0.0f);
@@ -59,16 +59,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		sphere->DebugDraw("Sphere");
 		plane.DebugDraw("Plane");
 
+		segment.DebugDraw("Segment");
 
-		if(IsCollision(*sphere.get(), plane)) {
-			sphere->SetColor(RED);
+		if(IsCollision(segment, plane)) {
+			color = RED;
 		} else {
-			sphere->SetColor(WHITE);
+			color = WHITE;
 		}
-
 
 		///
 		/// ↑更新処理ここまで
@@ -80,8 +79,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		sphere->Draw(*camera.get());
 		plane.Draw(camera.get());
+		segment.Draw(camera.get(), color);
 
 		///
 		/// ↑描画処理ここまで

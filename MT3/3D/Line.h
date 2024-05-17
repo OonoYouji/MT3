@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cmath>
 
 #include "Vector3.h"
 #include "Camera.h"
@@ -10,10 +11,9 @@ struct Line {
 	Vec3f diff;
 
 	void DebugDraw(const std::string& windowName);
-	void Draw(const Camera* camera);
+	void Draw(const Camera* camera, uint32_t color);
 };
 
+struct Segment : public Line {};
+struct Ray : public Line {};
 
-
-using Ray = Line;
-using Segment = Line;

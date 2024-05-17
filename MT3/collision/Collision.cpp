@@ -30,3 +30,31 @@ bool IsCollision(const Sphere& sphere, const Plane& plane) {
 
 	return false;
 }
+
+bool IsCollision(const Line& line, const Plane& plane) {
+	float dot = Dot(plane.normal, line.diff);
+	///- 垂直=平面なので、衝突していない
+	if(dot == 0.0f) { return false; }
+	return true;
+}
+
+bool IsCollision(const Ray& ray, const Plane& plane) {
+	float dot = Dot(plane.normal, ray.diff);
+	///- 垂直=平面なので、衝突していない
+	if(dot == 0.0f) { return false; }
+	float t = (plane.distance - Dot(plane.normal, ray.origin)) / dot;
+
+	if(t >= 0.0f) { return true; }
+	return false;
+}
+
+bool IsCollision(const Segment& segment, const Plane& plane) {
+
+	float dot = Dot(plane.normal, segment.diff);
+	///- 垂直=平面なので、衝突していない
+	if(dot == 0.0f) { return false; }
+	float t = (plane.distance - Dot(plane.normal, segment.origin)) / dot;
+
+	if(t >= 0.0f && t <= 1.0f) { return true; }
+	return false;
+}
