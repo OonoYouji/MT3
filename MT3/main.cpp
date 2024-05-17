@@ -13,6 +13,7 @@
 #include "Sphere.h"
 #include "Line.h"
 #include "Plane.h"
+#include "Triangle.h"
 #include "Collision.h"
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -35,10 +36,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	segment.diff = Vec3f(1.0f, 1.0f, 1.0f);
 	uint32_t color = 0xffffffff;
 
-	Plane plane;
-	plane.normal = Vec3f(0.0f, 1.0f, 0.0f);
-	plane.distance = 0.0f;
-
+	Triangle triangle;
+	triangle.origin = Vec3f(0.0f, 0.0f, 0.0f);
+	triangle.vertices[0] = Vec3f(0.0f, 0.0f, 0.5f);
+	triangle.vertices[1] = Vec3f(0.5f, 0.0f, -0.5f);
+	triangle.vertices[2] = Vec3f(-0.5f, 0.0f, -0.5f);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -59,11 +61,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		plane.DebugDraw("Plane");
-
+		triangle.DebugDraw("Triangle");
 		segment.DebugDraw("Segment");
 
-		if(IsCollision(segment, plane)) {
+		if(IsCollision(segment, triangle)) {
 			color = RED;
 		} else {
 			color = WHITE;
@@ -79,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		plane.Draw(camera.get());
+		triangle.Draw(camera.get(), WHITE);
 		segment.Draw(camera.get(), color);
 
 		///

@@ -81,6 +81,12 @@
     <ClCompile Include="3D\Line.cpp">
       <Filter>source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="3D\Plane.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Triangle.cpp">
+      <Filter>source\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -179,6 +185,10 @@
     </ClInclude>
     <ClInclude Include="3D\Line.h">
       <Filter>include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Plane.h" />
+    <ClInclude Include="Math\Triangle.h">
+      <Filter>include\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

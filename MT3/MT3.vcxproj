@@ -124,6 +124,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
+    <ClCompile Include="Math\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3D\Camera.h" />
@@ -160,6 +161,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="collision\Collision.h" />
     <ClInclude Include="math\MyMath.h" />
+    <ClInclude Include="Math\Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

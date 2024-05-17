@@ -1,10 +1,10 @@
 ﻿#include "Collision.h"
 
-#include "Sphere.h"
-#include "Plane.h"
-
 #include "Vector3.h"
 #include "MyMath.h"
+#include "Sphere.h"
+#include "Plane.h"
+#include "Triangle.h"
 
 bool IsCollision(const Sphere& s1, const Sphere& s2) {
 	Vec3f distance = s2.GetPosition() - s1.GetPosition();
@@ -56,5 +56,34 @@ bool IsCollision(const Segment& segment, const Plane& plane) {
 	float t = (plane.distance - Dot(plane.normal, segment.origin)) / dot;
 
 	if(t >= 0.0f && t <= 1.0f) { return true; }
+	return false;
+}
+
+bool IsCollision(const Segment& segment, const Triangle& triangle) {
+
+	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
+	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
+	Vec3f v20 = triangle.vertices[0] - triangle.vertices[2];
+
+	Vec3f normal = Cross(v01, v12);
+	float distance = Length(triangle.origin);
+
+	float dot = Dot(normal, segment.diff);
+	if(dot == 0.0f) { return false; }
+	float t = (distance - Dot(normal, segment.origin)) / dot;
+	if(t < 0.0f || t > 1.0f) { return false; }
+
+	Vec3f planePoint =  (segment.diff * t);
+
+	Vec3f cross01 = Cross(v01, planePoint);
+	Vec3f cross12 = Cross(v12, planePoint);
+	Vec3f cross20 = Cross(v20, planePoint);
+
+	if(Dot(cross01, normal) >= 0.0f
+	   && Dot(cross12, normal) >= 0.0f
+	   && Dot(cross20, normal) >= 0.0f) {
+		return true;
+	}
+
 	return false;
 }
