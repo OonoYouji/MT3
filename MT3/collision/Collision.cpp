@@ -59,6 +59,64 @@ bool IsCollision(const Segment& segment, const Plane& plane) {
 	return false;
 }
 
+
+
+bool IsCollision(const Line& line, const Triangle& triangle) {
+
+	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
+	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
+	Vec3f v20 = triangle.vertices[0] - triangle.vertices[2];
+
+	Vec3f normal = Cross(v01, v12);
+	float distance = Dot(triangle.origin, normal);
+
+	float dot = Dot(normal, line.diff);
+	if(dot == 0.0f) { return false; }
+	float t = (distance - Dot(normal, line.origin)) / dot;
+	Vec3f planePoint = line.origin + (line.diff * t);
+
+	Vec3f cross01 = Cross(v01, planePoint - triangle.vertices[1]);
+	Vec3f cross12 = Cross(v12, planePoint - triangle.vertices[2]);
+	Vec3f cross20 = Cross(v20, planePoint - triangle.vertices[0]);
+
+	if(Dot(cross01, normal) >= 0.0f
+	   && Dot(cross12, normal) >= 0.0f
+	   && Dot(cross20, normal) >= 0.0f) {
+		return true;
+	}
+
+	return false;
+}
+
+bool IsCollision(const Ray& ray, const Triangle& triangle) {
+
+	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
+	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
+	Vec3f v20 = triangle.vertices[0] - triangle.vertices[2];
+
+	Vec3f normal = Cross(v01, v12);
+	float distance = Dot(triangle.origin, normal);
+
+	float dot = Dot(normal, ray.diff);
+	if(dot == 0.0f) { return false; }
+	float t = (distance - Dot(normal, ray.origin)) / dot;
+	if(t < 0.0f) { return false; }
+
+	Vec3f planePoint = ray.origin + (ray.diff * t);
+
+	Vec3f cross01 = Cross(v01, planePoint - triangle.vertices[1]);
+	Vec3f cross12 = Cross(v12, planePoint - triangle.vertices[2]);
+	Vec3f cross20 = Cross(v20, planePoint - triangle.vertices[0]);
+
+	if(Dot(cross01, normal) >= 0.0f
+	   && Dot(cross12, normal) >= 0.0f
+	   && Dot(cross20, normal) >= 0.0f) {
+		return true;
+	}
+
+	return false;
+}
+
 bool IsCollision(const Segment& segment, const Triangle& triangle) {
 
 	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
@@ -66,18 +124,18 @@ bool IsCollision(const Segment& segment, const Triangle& triangle) {
 	Vec3f v20 = triangle.vertices[0] - triangle.vertices[2];
 
 	Vec3f normal = Cross(v01, v12);
-	float distance = Length(triangle.origin);
+	float distance = Dot(triangle.origin, normal);
 
 	float dot = Dot(normal, segment.diff);
 	if(dot == 0.0f) { return false; }
 	float t = (distance - Dot(normal, segment.origin)) / dot;
 	if(t < 0.0f || t > 1.0f) { return false; }
 
-	Vec3f planePoint =  (segment.diff * t);
+	Vec3f planePoint = segment.origin + (segment.diff * t);
 
-	Vec3f cross01 = Cross(v01, planePoint);
-	Vec3f cross12 = Cross(v12, planePoint);
-	Vec3f cross20 = Cross(v20, planePoint);
+	Vec3f cross01 = Cross(v01, planePoint - triangle.vertices[1]);
+	Vec3f cross12 = Cross(v12, planePoint - triangle.vertices[2]);
+	Vec3f cross20 = Cross(v20, planePoint - triangle.vertices[0]);
 
 	if(Dot(cross01, normal) >= 0.0f
 	   && Dot(cross12, normal) >= 0.0f
