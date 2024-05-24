@@ -16,6 +16,6 @@ struct AABB {
 	Vec3f max;
 	
 	void Draw(const Camera* camera, uint32_t color);
-	void ImGuiDebug(const std::string& windowName);
+	void DebugDraw(const std::string& windowName);
 
 };

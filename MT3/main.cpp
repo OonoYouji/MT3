@@ -32,14 +32,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	AABB aabb[2] = {
-		///- 0
-		{.min{0.0f, 0.0f, 0.0f},
-		.max{1.0f, 1.0f, 1.0f}},
-		///- 1
-		{.min{-1.0f, -1.0f, -1.0f},
-		.max{0.5f, 0.5f, 0.5f}},
+	AABB aabb = {
+		.min{0.0f, 0.0f, 0.0f},
+		.max{1.0f, 1.0f, 1.0f}
 	};
+
+	std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>();
+	sphere->Init();
 
 	uint32_t color = WHITE;
 
@@ -62,13 +61,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		aabb[0].ImGuiDebug("AABB No.0");
-		aabb[1].ImGuiDebug("AABB No.1");
+		aabb.DebugDraw("AABB");
+		sphere->DebugDraw("Sphere");
+
+
 
 		color = WHITE;
-		if(IsCollision(aabb[0], aabb[1])) {
+		if(IsCollision(aabb, *sphere.get())) {
 			color = RED;
 		}
+
+		sphere->SetColor(color);
 
 		///
 		/// ↑更新処理ここまで
@@ -80,9 +83,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		for(uint32_t i = 0; i < 2; i++) {
-			aabb[i].Draw(camera.get(), color);
-		}
+		sphere->Draw(*camera.get());
+		aabb.Draw(camera.get(), color);
 
 		///
 		/// ↑描画処理ここまで

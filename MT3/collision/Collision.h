@@ -20,3 +20,5 @@ bool IsCollision(const Ray& ray, const Triangle& triangle);
 bool IsCollision(const Segment& segment, const Triangle& triangle);
 
 bool IsCollision(const AABB& a, const AABB& b);
+
+bool IsCollision(const AABB& aabb, const Sphere& sphere);

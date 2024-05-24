@@ -1,5 +1,7 @@
 ﻿#include "Collision.h"
 
+#include <algorithm>
+
 #include "Vector3.h"
 #include "MyMath.h"
 #include "Sphere.h"
@@ -151,4 +153,20 @@ bool IsCollision(const AABB& a, const AABB& b) {
 	if(!(a.min.y <= b.max.y && a.max.y >= b.min.y)) { return false; }
 	if(!(a.min.z <= b.max.z && a.max.z >= b.min.z)) { return false; }
 	return true;
+}
+
+bool IsCollision(const AABB& aabb, const Sphere& sphere) {
+
+	Vec3f closestPoint{
+		{std::clamp(sphere.GetPosition().x, aabb.min.x, aabb.max.x)},
+		{std::clamp(sphere.GetPosition().y, aabb.min.y, aabb.max.y)},
+		{std::clamp(sphere.GetPosition().z, aabb.min.z, aabb.max.z)}
+	};
+
+	float distance = Length(closestPoint - sphere.GetPosition());
+	if(distance <= sphere.GetRadius()) {
+		return true;
+	}
+
+	return false;
 }

@@ -42,7 +42,7 @@ void AABB::Draw(const Camera* camera, uint32_t color) {
 
 }
 
-void AABB::ImGuiDebug(const std::string& windowName) {
+void AABB::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
 
