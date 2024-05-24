@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Line.h"
+#include "AABB.h"
 
 class Sphere;
 struct Plane;
@@ -17,3 +18,5 @@ bool IsCollision(const Segment& segment, const Plane& plane);
 bool IsCollision(const Line& line, const Triangle& triangle);
 bool IsCollision(const Ray& ray, const Triangle& triangle);
 bool IsCollision(const Segment& segment, const Triangle& triangle);
+
+bool IsCollision(const AABB& a, const AABB& b);

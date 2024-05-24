@@ -14,6 +14,7 @@
 #include "Line.h"
 #include "Plane.h"
 #include "Triangle.h"
+#include "AABB.h"
 #include "Collision.h"
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -31,16 +32,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Segment segment;
-	segment.origin = Vec3f(0.0f, 0.0f, 0.0f);
-	segment.diff = Vec3f(1.0f, 1.0f, 1.0f);
-	uint32_t color = 0xffffffff;
+	AABB aabb[2] = {
+		///- 0
+		{.min{0.0f, 0.0f, 0.0f},
+		.max{1.0f, 1.0f, 1.0f}},
+		///- 1
+		{.min{-1.0f, -1.0f, -1.0f},
+		.max{0.5f, 0.5f, 0.5f}},
+	};
 
-	Triangle triangle;
-	triangle.origin = Vec3f(0.0f, 0.0f, 0.0f);
-	triangle.vertices[0] = Vec3f(0.0f, 0.0f, 0.5f);
-	triangle.vertices[1] = Vec3f(0.5f, 0.0f, -0.5f);
-	triangle.vertices[2] = Vec3f(-0.5f, 0.0f, -0.5f);
+	uint32_t color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -61,13 +62,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		triangle.DebugDraw("Triangle");
-		segment.DebugDraw("Segment");
+		aabb[0].ImGuiDebug("AABB No.0");
+		aabb[1].ImGuiDebug("AABB No.1");
 
-		if(IsCollision(segment, triangle)) {
+		color = WHITE;
+		if(IsCollision(aabb[0], aabb[1])) {
 			color = RED;
-		} else {
-			color = WHITE;
 		}
 
 		///
@@ -80,8 +80,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		triangle.Draw(camera.get(), WHITE);
-		segment.Draw(camera.get(), color);
+		for(uint32_t i = 0; i < 2; i++) {
+			aabb[i].Draw(camera.get(), color);
+		}
 
 		///
 		/// ↑描画処理ここまで

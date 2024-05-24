@@ -108,6 +108,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3D\AABB.cpp" />
     <ClCompile Include="3D\Camera.cpp" />
     <ClCompile Include="3D\Grid.cpp" />
     <ClCompile Include="3D\Line.cpp" />
@@ -127,6 +128,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="Math\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3D\AABB.h" />
     <ClInclude Include="3D\Camera.h" />
     <ClInclude Include="3D\Grid.h" />
     <ClInclude Include="3D\Line.h" />

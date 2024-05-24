@@ -145,3 +145,10 @@ bool IsCollision(const Segment& segment, const Triangle& triangle) {
 
 	return false;
 }
+
+bool IsCollision(const AABB& a, const AABB& b) {
+	if(!(a.min.x <= b.max.x && a.max.x >= b.min.x)) { return false; }
+	if(!(a.min.y <= b.max.y && a.max.y >= b.min.y)) { return false; }
+	if(!(a.min.z <= b.max.z && a.max.z >= b.min.z)) { return false; }
+	return true;
+}
