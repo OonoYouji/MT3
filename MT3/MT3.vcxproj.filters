@@ -90,6 +90,9 @@
     <ClCompile Include="3D\AABB.cpp">
       <Filter>source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="3D\OBB.cpp">
+      <Filter>source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -194,6 +197,9 @@
       <Filter>include\Math</Filter>
     </ClInclude>
     <ClInclude Include="3D\AABB.h">
+      <Filter>include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\OBB.h">
       <Filter>include\3D</Filter>
     </ClInclude>
   </ItemGroup>
