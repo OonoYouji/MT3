@@ -1,12 +1,17 @@
 ﻿#include "Collision.h"
+#define NOMINMAX
 
 #include <algorithm>
+
+#include <ImGuiManager.h>
 
 #include "Vector3.h"
 #include "MyMath.h"
 #include "Sphere.h"
 #include "Plane.h"
 #include "Triangle.h"
+
+
 
 bool IsCollision(const Sphere& s1, const Sphere& s2) {
 	Vec3f distance = s2.GetPosition() - s1.GetPosition();
@@ -165,6 +170,106 @@ bool IsCollision(const AABB& aabb, const Sphere& sphere) {
 
 	float distance = Length(closestPoint - sphere.GetPosition());
 	if(distance <= sphere.GetRadius()) {
+		return true;
+	}
+
+	return false;
+}
+
+bool IsCollision(const AABB& aabb, const Line& segment) {
+	Vec3f min = (aabb.min - segment.origin) / segment.diff;
+	Vec3f max = (aabb.max - segment.origin) / segment.diff;
+
+	Vec3f nearPoint = {
+		std::min(min.x, max.x),
+		std::min(min.y, max.y),
+		std::min(min.z, max.z)
+	};
+
+	Vec3f farPoint = {
+		std::max(min.x, max.x),
+		std::max(min.y, max.y),
+		std::max(min.z, max.z)
+	};
+
+	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
+	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
+
+	ImGui::Text("tmin : %f", tmin);
+	ImGui::Text("tmax : %f", tmax);
+
+	///- Lineには制限がない
+
+	if(tmin <= tmax) {
+		return true;
+	}
+
+	return false;
+}
+
+bool IsCollision(const AABB& aabb, const Ray& segment) {
+	Vec3f min = (aabb.min - segment.origin) / segment.diff;
+	Vec3f max = (aabb.max - segment.origin) / segment.diff;
+
+	Vec3f nearPoint = {
+		std::min(min.x, max.x),
+		std::min(min.y, max.y),
+		std::min(min.z, max.z)
+	};
+
+	Vec3f farPoint = {
+		std::max(min.x, max.x),
+		std::max(min.y, max.y),
+		std::max(min.z, max.z)
+	};
+
+	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
+	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
+
+	ImGui::Text("tmin : %f", tmin);
+	ImGui::Text("tmax : %f", tmax);
+
+	///- Ray用の制限
+	if(tmax < 0.0f) {
+		return false;
+	}
+
+	if(tmin <= tmax) {
+		return true;
+	}
+
+	return false;
+}
+
+bool IsCollision(const AABB& aabb, const Segment& segment) {
+
+	Vec3f min = (aabb.min - segment.origin) / segment.diff;
+	Vec3f max = (aabb.max - segment.origin) / segment.diff;
+
+	Vec3f nearPoint= {
+		std::min(min.x, max.x),
+		std::min(min.y, max.y),
+		std::min(min.z, max.z)
+	};
+
+	Vec3f farPoint = {
+		std::max(min.x, max.x),
+		std::max(min.y, max.y),
+		std::max(min.z, max.z)
+	};
+
+	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
+	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
+
+	ImGui::Text("tmin : %f", tmin);
+	ImGui::Text("tmax : %f", tmax);
+
+	///- Segment用の制限
+	if(1.0f < tmin || tmax < 0.0f) {
+		return false;
+	}
+
+	if(tmin <= tmax) {
 		return true;
 	}
 

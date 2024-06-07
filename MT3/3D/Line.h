@@ -6,7 +6,16 @@
 #include "Vector3.h"
 #include "Camera.h"
 
-struct Line {
+
+enum class LineTag {
+	Line,
+	Segment,
+	Ray,
+};
+
+template<LineTag tag>
+struct LineBase {
+
 	Vec3f origin;
 	Vec3f diff;
 
@@ -14,6 +23,6 @@ struct Line {
 	void Draw(const Camera* camera, uint32_t color);
 };
 
-struct Segment : public Line {};
-struct Ray : public Line {};
-
+using Line = LineBase<LineTag::Line>;
+using Segment = LineBase<LineTag::Segment>;
+using Ray = LineBase<LineTag::Ray>;

@@ -37,8 +37,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.max{1.0f, 1.0f, 1.0f}
 	};
 
-	std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>();
-	sphere->Init();
+	Segment segment = {
+		.origin{0.0f, 0.0f, 0.0f},
+		.diff{1.0f, 1.0f, 1.0f}
+	};
 
 	uint32_t color = WHITE;
 
@@ -62,16 +64,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		camera->Update();
 
 		aabb.DebugDraw("AABB");
-		sphere->DebugDraw("Sphere");
-
+		segment.DebugDraw("Segment");
 
 
 		color = WHITE;
-		if(IsCollision(aabb, *sphere.get())) {
+		if(IsCollision(aabb, segment)) {
 			color = RED;
 		}
 
-		sphere->SetColor(color);
 
 		///
 		/// ↑更新処理ここまで
@@ -83,8 +83,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		sphere->Draw(*camera.get());
 		aabb.Draw(camera.get(), color);
+		segment.Draw(camera.get(), color);
 
 		///
 		/// ↑描画処理ここまで

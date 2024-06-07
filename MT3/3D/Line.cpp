@@ -7,7 +7,13 @@
 #include "Matrix4x4.h"
 
 
-void Line::DebugDraw(const std::string& windowName) {
+template struct LineBase<LineTag::Line>;
+template struct LineBase<LineTag::Segment>;
+template struct LineBase<LineTag::Ray>;
+
+
+template<LineTag tag>
+void LineBase<tag>::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
 
@@ -18,7 +24,9 @@ void Line::DebugDraw(const std::string& windowName) {
 #endif // _DEBUG
 }
 
-void Line::Draw(const Camera* camera, uint32_t color) {
+
+template<LineTag tag>
+void LineBase<tag>::Draw(const Camera* camera, uint32_t color) {
 	Vec3f start = Mat4::Transform(Mat4::Transform(origin, camera->GetMatVp()), camera->GetMatViewport());
 	Vec3f end = Mat4::Transform(Mat4::Transform(origin + diff, camera->GetMatVp()), camera->GetMatViewport());
 
