@@ -15,6 +15,7 @@
 #include "Plane.h"
 #include "Triangle.h"
 #include "AABB.h"
+#include "OBB.h"
 #include "Collision.h"
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
@@ -32,14 +33,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	AABB aabb = {
-		.min{0.0f, 0.0f, 0.0f},
-		.max{1.0f, 1.0f, 1.0f}
+	OBB obb = {
+		.center = {0.0f, 0.0f, 0.0f},
+		.orientatinos = {},
+		.size = {1.0f, 1.0f, 1.0f},
+		.rotation = {0.0f, 0.0f, 0.0f}
 	};
 
-	Segment segment = {
-		.origin{0.0f, 0.0f, 0.0f},
-		.diff{1.0f, 1.0f, 1.0f}
+	Sphere sphere = {
+		.rotate = {0.0f, 0.0f, 0.0f},
+		.center = {0.0f, 0.0f, 0.0f},
+		.radius = 0.5f,
+		.subdivision = 16
 	};
 
 	uint32_t color = WHITE;
@@ -63,15 +68,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		aabb.DebugDraw("AABB");
-		segment.DebugDraw("Segment");
+		obb.DebugDraw("OBB");
+		obb.CulcOrientations();
 
+		sphere.DebugDraw("Sphere");
 
 		color = WHITE;
-		if(IsCollision(aabb, segment)) {
+		if(IsCollided(obb, sphere)) {
 			color = RED;
 		}
-
 
 		///
 		/// ↑更新処理ここまで
@@ -83,8 +88,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		aabb.Draw(camera.get(), color);
-		segment.Draw(camera.get(), color);
+		obb.Draw(camera.get(), color);
+		obb.DrawAxis(camera.get());
+
+		sphere.Draw(camera.get(), color);
 
 		///
 		/// ↑描画処理ここまで

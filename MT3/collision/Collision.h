@@ -3,25 +3,29 @@
 #include "Line.h"
 #include "AABB.h"
 
-class Sphere;
+struct Sphere;
 struct Plane;
 struct Triangle;
+struct OBB;
 
-bool IsCollision(const Sphere& s1, const Sphere& s2);
+bool IsCollided(const Sphere& s1, const Sphere& s2);
 
-bool IsCollision(const Sphere& sphere, const Plane& plane);
+bool IsCollided(const Sphere& sphere, const Plane& plane);
 
-bool IsCollision(const Line& line, const Plane& plane);
-bool IsCollision(const Ray& ray, const Plane& plane);
-bool IsCollision(const Segment& segment, const Plane& plane);
+bool IsCollided(const Line& line, const Plane& plane);
+bool IsCollided(const Ray& ray, const Plane& plane);
+bool IsCollided(const Segment& segment, const Plane& plane);
 
-bool IsCollision(const Line& line, const Triangle& triangle);
-bool IsCollision(const Ray& ray, const Triangle& triangle);
-bool IsCollision(const Segment& segment, const Triangle& triangle);
+bool IsCollided(const Line& line, const Triangle& triangle);
+bool IsCollided(const Ray& ray, const Triangle& triangle);
+bool IsCollided(const Segment& segment, const Triangle& triangle);
 
-bool IsCollision(const AABB& a, const AABB& b);
+bool IsCollided(const AABB& a, const AABB& b);
 
-bool IsCollision(const AABB& aabb, const Sphere& sphere);
-bool IsCollision(const AABB& aabb, const Line& segment);
-bool IsCollision(const AABB& aabb, const Ray& segment);
-bool IsCollision(const AABB& aabb, const Segment& segment);
+bool IsCollided(const AABB& aabb, const Sphere& sphere);
+
+bool IsCollided(const AABB& aabb, const Line& segment);
+bool IsCollided(const AABB& aabb, const Ray& segment);
+bool IsCollided(const AABB& aabb, const Segment& segment);
+
+bool IsCollided(const OBB& obb, const Sphere& sphere);

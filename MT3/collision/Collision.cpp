@@ -10,42 +10,43 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "Triangle.h"
+#include "OBB.h"
 
 
 
-bool IsCollision(const Sphere& s1, const Sphere& s2) {
-	Vec3f distance = s2.GetPosition() - s1.GetPosition();
+bool IsCollided(const Sphere& s1, const Sphere& s2) {
+	Vec3f distance = s2.center - s1.center;
 	float length = Length(distance);
 
 	///- 二点間の距離が二つの球の半径より小さければtrue
-	if(length < s1.GetRadius() + s2.GetRadius()) {
+	if(length < s1.radius + s2.radius) {
 		return true;
 	}
 
 	return false;
 }
 
-bool IsCollision(const Sphere& sphere, const Plane& plane) {
+bool IsCollided(const Sphere& sphere, const Plane& plane) {
 
-	float scaler = Dot(sphere.GetPosition(), plane.normal) - plane.distance;
-	Vec3f planePoint = sphere.GetPosition() - (plane.normal * scaler);
+	float scaler = Dot(sphere.center, plane.normal) - plane.distance;
+	Vec3f planePoint = sphere.center - (plane.normal * scaler);
 
-	float length = Length(sphere.GetPosition() - planePoint);
-	if(length < sphere.GetRadius()) {
+	float length = Length(sphere.center - planePoint);
+	if(length < sphere.radius) {
 		return true;
 	}
 
 	return false;
 }
 
-bool IsCollision(const Line& line, const Plane& plane) {
+bool IsCollided(const Line& line, const Plane& plane) {
 	float dot = Dot(plane.normal, line.diff);
 	///- 垂直=平面なので、衝突していない
 	if(dot == 0.0f) { return false; }
 	return true;
 }
 
-bool IsCollision(const Ray& ray, const Plane& plane) {
+bool IsCollided(const Ray& ray, const Plane& plane) {
 	float dot = Dot(plane.normal, ray.diff);
 	///- 垂直=平面なので、衝突していない
 	if(dot == 0.0f) { return false; }
@@ -55,7 +56,7 @@ bool IsCollision(const Ray& ray, const Plane& plane) {
 	return false;
 }
 
-bool IsCollision(const Segment& segment, const Plane& plane) {
+bool IsCollided(const Segment& segment, const Plane& plane) {
 
 	float dot = Dot(plane.normal, segment.diff);
 	///- 垂直=平面なので、衝突していない
@@ -68,7 +69,7 @@ bool IsCollision(const Segment& segment, const Plane& plane) {
 
 
 
-bool IsCollision(const Line& line, const Triangle& triangle) {
+bool IsCollided(const Line& line, const Triangle& triangle) {
 
 	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
 	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
@@ -95,7 +96,7 @@ bool IsCollision(const Line& line, const Triangle& triangle) {
 	return false;
 }
 
-bool IsCollision(const Ray& ray, const Triangle& triangle) {
+bool IsCollided(const Ray& ray, const Triangle& triangle) {
 
 	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
 	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
@@ -124,7 +125,7 @@ bool IsCollision(const Ray& ray, const Triangle& triangle) {
 	return false;
 }
 
-bool IsCollision(const Segment& segment, const Triangle& triangle) {
+bool IsCollided(const Segment& segment, const Triangle& triangle) {
 
 	Vec3f v01 = triangle.vertices[1] - triangle.vertices[0];
 	Vec3f v12 = triangle.vertices[2] - triangle.vertices[1];
@@ -153,30 +154,30 @@ bool IsCollision(const Segment& segment, const Triangle& triangle) {
 	return false;
 }
 
-bool IsCollision(const AABB& a, const AABB& b) {
+bool IsCollided(const AABB& a, const AABB& b) {
 	if(!(a.min.x <= b.max.x && a.max.x >= b.min.x)) { return false; }
 	if(!(a.min.y <= b.max.y && a.max.y >= b.min.y)) { return false; }
 	if(!(a.min.z <= b.max.z && a.max.z >= b.min.z)) { return false; }
 	return true;
 }
 
-bool IsCollision(const AABB& aabb, const Sphere& sphere) {
+bool IsCollided(const AABB& aabb, const Sphere& sphere) {
 
 	Vec3f closestPoint{
-		{std::clamp(sphere.GetPosition().x, aabb.min.x, aabb.max.x)},
-		{std::clamp(sphere.GetPosition().y, aabb.min.y, aabb.max.y)},
-		{std::clamp(sphere.GetPosition().z, aabb.min.z, aabb.max.z)}
+		{std::clamp(sphere.center.x, aabb.min.x, aabb.max.x)},
+		{std::clamp(sphere.center.y, aabb.min.y, aabb.max.y)},
+		{std::clamp(sphere.center.z, aabb.min.z, aabb.max.z)}
 	};
 
-	float distance = Length(closestPoint - sphere.GetPosition());
-	if(distance <= sphere.GetRadius()) {
+	float distance = Length(closestPoint - sphere.center);
+	if(distance <= sphere.radius) {
 		return true;
 	}
 
 	return false;
 }
 
-bool IsCollision(const AABB& aabb, const Line& segment) {
+bool IsCollided(const AABB& aabb, const Line& segment) {
 	Vec3f min = (aabb.min - segment.origin) / segment.diff;
 	Vec3f max = (aabb.max - segment.origin) / segment.diff;
 
@@ -207,7 +208,7 @@ bool IsCollision(const AABB& aabb, const Line& segment) {
 	return false;
 }
 
-bool IsCollision(const AABB& aabb, const Ray& segment) {
+bool IsCollided(const AABB& aabb, const Ray& segment) {
 	Vec3f min = (aabb.min - segment.origin) / segment.diff;
 	Vec3f max = (aabb.max - segment.origin) / segment.diff;
 
@@ -241,7 +242,7 @@ bool IsCollision(const AABB& aabb, const Ray& segment) {
 	return false;
 }
 
-bool IsCollision(const AABB& aabb, const Segment& segment) {
+bool IsCollided(const AABB& aabb, const Segment& segment) {
 
 	Vec3f min = (aabb.min - segment.origin) / segment.diff;
 	Vec3f max = (aabb.max - segment.origin) / segment.diff;
@@ -274,4 +275,29 @@ bool IsCollision(const AABB& aabb, const Segment& segment) {
 	}
 
 	return false;
+}
+
+bool IsCollided(const OBB& obb, const Sphere& sphere) {
+
+	///- OBBの逆行列
+	Matrix4x4 inverseObbWorldMatrix = Mat4::MakeInverse(obb.MakeWorldMatrix());
+
+	///- Sphereの座標をOBBのLocal空間へ変換
+	Vec3f obbLocalPosition = Mat4::Transform(sphere.center, inverseObbWorldMatrix);
+
+	///- OBBのLocal空間内のAABB
+	AABB aabbObbLocal = {
+		.min = -obb.size,
+		.max = obb.size
+	};
+
+	///- OBBのLocal空間内のSphere
+	Sphere sphereObbLocal = {
+		.rotate = sphere.rotate,
+		.center = obbLocalPosition,
+		.radius = sphere.radius,
+	};
+
+	///- Local空間に変換したAABBとSphere
+	return IsCollided(aabbObbLocal, sphereObbLocal);
 }
