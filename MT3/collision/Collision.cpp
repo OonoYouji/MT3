@@ -177,9 +177,9 @@ bool IsCollided(const AABB& aabb, const Sphere& sphere) {
 	return false;
 }
 
-bool IsCollided(const AABB& aabb, const Line& segment) {
-	Vec3f min = (aabb.min - segment.origin) / segment.diff;
-	Vec3f max = (aabb.max - segment.origin) / segment.diff;
+bool IsCollided(const AABB& aabb, const Line& line) {
+	Vec3f min = (aabb.min - line.origin) / line.diff;
+	Vec3f max = (aabb.max - line.origin) / line.diff;
 
 	Vec3f nearPoint = {
 		std::min(min.x, max.x),
@@ -193,11 +193,8 @@ bool IsCollided(const AABB& aabb, const Line& segment) {
 		std::max(min.z, max.z)
 	};
 
-	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
-	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
-
-	ImGui::Text("tmin : %f", tmin);
-	ImGui::Text("tmax : %f", tmax);
+	float tmin = std::max({ nearPoint.x, nearPoint.y, nearPoint.z });
+	float tmax = std::min({ farPoint.x, farPoint.y, farPoint.z });
 
 	///- Lineには制限がない
 
@@ -208,9 +205,9 @@ bool IsCollided(const AABB& aabb, const Line& segment) {
 	return false;
 }
 
-bool IsCollided(const AABB& aabb, const Ray& segment) {
-	Vec3f min = (aabb.min - segment.origin) / segment.diff;
-	Vec3f max = (aabb.max - segment.origin) / segment.diff;
+bool IsCollided(const AABB& aabb, const Ray& ray) {
+	Vec3f min = (aabb.min - ray.origin) / ray.diff;
+	Vec3f max = (aabb.max - ray.origin) / ray.diff;
 
 	Vec3f nearPoint = {
 		std::min(min.x, max.x),
@@ -224,11 +221,8 @@ bool IsCollided(const AABB& aabb, const Ray& segment) {
 		std::max(min.z, max.z)
 	};
 
-	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
-	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
-
-	ImGui::Text("tmin : %f", tmin);
-	ImGui::Text("tmax : %f", tmax);
+	float tmin = std::max({ nearPoint.x, nearPoint.y, nearPoint.z });
+	float tmax = std::min({ farPoint.x, farPoint.y, farPoint.z });
 
 	///- Ray用の制限
 	if(tmax < 0.0f) {
@@ -247,7 +241,7 @@ bool IsCollided(const AABB& aabb, const Segment& segment) {
 	Vec3f min = (aabb.min - segment.origin) / segment.diff;
 	Vec3f max = (aabb.max - segment.origin) / segment.diff;
 
-	Vec3f nearPoint= {
+	Vec3f nearPoint = {
 		std::min(min.x, max.x),
 		std::min(min.y, max.y),
 		std::min(min.z, max.z)
@@ -259,11 +253,8 @@ bool IsCollided(const AABB& aabb, const Segment& segment) {
 		std::max(min.z, max.z)
 	};
 
-	float tmin = std::max(std::max(nearPoint.x, nearPoint.y), nearPoint.z);
-	float tmax = std::min(std::min(farPoint.x, farPoint.y), farPoint.z);
-
-	ImGui::Text("tmin : %f", tmin);
-	ImGui::Text("tmax : %f", tmax);
+	float tmin = std::max({ nearPoint.x, nearPoint.y, nearPoint.z });
+	float tmax = std::min({ farPoint.x, farPoint.y, farPoint.z });
 
 	///- Segment用の制限
 	if(1.0f < tmin || tmax < 0.0f) {
@@ -300,4 +291,68 @@ bool IsCollided(const OBB& obb, const Sphere& sphere) {
 
 	///- Local空間に変換したAABBとSphere
 	return IsCollided(aabbObbLocal, sphereObbLocal);
+}
+
+
+bool IsCollided(const OBB& obb, const Line& line) {
+
+	///- OBBの逆行列
+	Matrix4x4 inverseObbWorldMatrix = Mat4::MakeInverse(obb.MakeWorldMatrix());
+
+	///- OBBのLocal空間に変換したAABB
+	AABB aabbObbLocal = {
+		.min = -obb.size,
+		.max = obb.size
+	};
+
+	///- OBBのLocal空間に変換したLine
+	Line lineObbLocal = {
+		.origin = Mat4::Transform(line.origin, inverseObbWorldMatrix),
+		.diff = Mat4::Transform(line.diff, inverseObbWorldMatrix)
+	};
+
+	///- OBBのLocal空間のAABBとLineで衝突判定を取る
+	return IsCollided(aabbObbLocal, lineObbLocal);
+}
+
+bool IsCollided(const OBB& obb, const Ray& ray) {
+
+	///- OBBの逆行列
+	Matrix4x4 inverseObbWorldMatrix = Mat4::MakeInverse(obb.MakeWorldMatrix());
+
+	///- OBBのLocal空間に変換したAABB
+	AABB aabbObbLocal = {
+		.min = -obb.size,
+		.max = obb.size
+	};
+
+	///- OBBのLocal空間に変換したRay
+	Ray rayObbLocal = {
+		.origin = Mat4::Transform(ray.origin, inverseObbWorldMatrix),
+		.diff = Mat4::Transform(ray.diff, inverseObbWorldMatrix)
+	};
+
+	///- OBBのLocal空間のAABBとRayで衝突判定を取る
+	return IsCollided(aabbObbLocal, rayObbLocal);
+}
+
+bool IsCollided(const OBB& obb, const Segment& segment) {
+
+	///- OBBの逆行列
+	Matrix4x4 inverseObbWorldMatrix = Mat4::MakeInverse(obb.MakeWorldMatrix());
+
+	///- OBBのLocal空間に変換したAABB
+	AABB aabbObbLocal = {
+		.min = -obb.size,
+		.max = obb.size
+	};
+
+	///- OBBのLocal空間に変換したSegment
+	Segment segmentObbLocal = {
+		.origin = Mat4::Transform(segment.origin, inverseObbWorldMatrix),
+		.diff = Mat4::Transform(segment.diff, inverseObbWorldMatrix)
+	};
+
+	///- OBBのLocal空間のAABBとSegmentで衝突判定を取る
+	return IsCollided(aabbObbLocal, segmentObbLocal);
 }

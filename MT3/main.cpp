@@ -40,11 +40,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.rotation = {0.0f, 0.0f, 0.0f}
 	};
 
-	Sphere sphere = {
-		.rotate = {0.0f, 0.0f, 0.0f},
-		.center = {0.0f, 0.0f, 0.0f},
-		.radius = 0.5f,
-		.subdivision = 16
+	Segment segment = {
+		.origin = {0.0f, 0.0f, 0.0f},
+		.diff = {1.0f, 1.0f, 0.0f}
 	};
 
 	uint32_t color = WHITE;
@@ -71,10 +69,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		obb.DebugDraw("OBB");
 		obb.CulcOrientations();
 
-		sphere.DebugDraw("Sphere");
+		segment.DebugDraw("Segment");
 
 		color = WHITE;
-		if(IsCollided(obb, sphere)) {
+		if(IsCollided(obb, segment)) {
 			color = RED;
 		}
 
@@ -91,7 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		obb.Draw(camera.get(), color);
 		obb.DrawAxis(camera.get());
 
-		sphere.Draw(camera.get(), color);
+		segment.Draw(camera.get(), WHITE);
 
 		///
 		/// ↑描画処理ここまで

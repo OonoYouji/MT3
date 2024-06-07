@@ -24,8 +24,12 @@ bool IsCollided(const AABB& a, const AABB& b);
 
 bool IsCollided(const AABB& aabb, const Sphere& sphere);
 
-bool IsCollided(const AABB& aabb, const Line& segment);
-bool IsCollided(const AABB& aabb, const Ray& segment);
+bool IsCollided(const AABB& aabb, const Line& line);
+bool IsCollided(const AABB& aabb, const Ray& ray);
 bool IsCollided(const AABB& aabb, const Segment& segment);
 
 bool IsCollided(const OBB& obb, const Sphere& sphere);
+
+bool IsCollided(const OBB& obb, const Line& line);
+bool IsCollided(const OBB& obb, const Ray& ray);
+bool IsCollided(const OBB& obb, const Segment& segment);
