@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string>
+#include <vector>
 
 #include <Vector3.h>
 #include <Matrix4x4.h>
@@ -39,5 +40,7 @@ struct OBB {
 	/// ImGuiでデバッグ表示
 	/// </summary>
 	void DebugDraw(const std::string& windowName);
+
+	std::vector<Vec3f> GetVertices() const;
 
 };

@@ -47,6 +47,41 @@ void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label
 	Novice::ScreenPrintf(static_cast<int>(pos.x) + kColumnWidth * 3, static_cast<int>(pos.y), "%s", label);
 }
 
+Vec3f Support(const std::vector<Vec3f> vertices, const Vec3f& direction) {
+	float maxDot = 0.0f;
+	Vec3f result = vertices[0];
+	for(const auto& vertex : vertices) {
+		float d = Dot(vertex, direction);
+		if(d > maxDot) {
+			maxDot = d;
+			result = vertex;
+		}
+	}
+	return result;
+}
+
+float MaxDot(const std::vector<Vec3f> vertices, const Vec3f& direction) {
+	float maxDot = 0.0f;
+	for(const auto& vertex : vertices) {
+		float d = Dot(vertex, direction);
+		if(d > maxDot) {
+			maxDot = d;
+		}
+	}
+	return maxDot;
+}
+
+float MinDot(const std::vector<Vec3f> vertices, const Vec3f& direction) {
+	float minDot = 100.0f;
+	for(const auto& vertex : vertices) {
+		float d = Dot(vertex, direction);
+		if(d < minDot) {
+			minDot = d;
+		}
+	}
+	return minDot;
+}
+
 Mat4 Add(const Mat4& m1, const Mat4& m2) {
 	return m1 + m2;
 }

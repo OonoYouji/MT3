@@ -79,7 +79,7 @@ void OBB::DrawAxis(const Camera* camera) {
 	Matrix4x4 worldMatrix = Mat4::MakeIdentity();
 	Matrix4x4 wvpMatrix = Mat4::MakeIdentity();
 	for(uint32_t i = 0; i < 4; i++) {
-		worldMatrix = Mat4::MakeTranslate(points[i]);
+		worldMatrix = Mat4::MakeTranslate(points[i] + center);
 		wvpMatrix = worldMatrix * camera->GetMatVp();
 		Vec3f ndc = Mat4::Transform({ 0.0f,0.0f,0.0f }, wvpMatrix);
 		points[i] = Mat4::Transform(ndc, camera->GetMatViewport());
@@ -108,4 +108,24 @@ void OBB::DebugDraw(const std::string& windowName) {
 
 	ImGui::End();
 #endif // _DEBUG
+}
+
+std::vector<Vec3f> OBB::GetVertices() const {
+	std::vector<Vec3f> result = {
+		{center.x - size.x , center.y + size.y , center.z - size.z },
+		{center.x + size.x , center.y + size.y , center.z - size.z },
+		{center.x - size.x , center.y - size.y , center.z - size.z },
+		{center.x + size.x , center.y - size.y , center.z - size.z },
+		{center.x - size.x , center.y + size.y , center.z + size.z },
+		{center.x + size.x , center.y + size.y , center.z + size.z },
+		{center.x - size.x , center.y - size.y , center.z + size.z },
+		{center.x + size.x , center.y - size.y , center.z + size.z },
+	};
+
+	Matrix4x4 rotate = Mat4::MakeRotate(rotation);
+	for(auto& v : result) {
+		v = Mat4::Transform(v, rotate);
+	}
+
+	return result;
 }

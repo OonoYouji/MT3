@@ -2,6 +2,7 @@
 #define NOMINMAX
 
 #include <algorithm>
+#include <vector>
 
 #include <ImGuiManager.h>
 
@@ -355,4 +356,53 @@ bool IsCollided(const OBB& obb, const Segment& segment) {
 
 	///- OBBのLocal空間のAABBとSegmentで衝突判定を取る
 	return IsCollided(aabbObbLocal, segmentObbLocal);
+}
+
+bool IsCollided(const OBB& obb1, const OBB& obb2) {
+
+	///- 分離軸を計算
+	std::vector<Vec3f> axes{
+		obb1.orientatinos[0],	//- obb1の法線
+		obb1.orientatinos[1],
+		obb1.orientatinos[2],
+		obb2.orientatinos[0],	//- obb2の法線
+		obb2.orientatinos[1],
+		obb2.orientatinos[2],
+		Cross(obb1.orientatinos[0], obb2.orientatinos[0]), //- x1, x2
+		Cross(obb1.orientatinos[0], obb2.orientatinos[1]), //- x1, y2
+		Cross(obb1.orientatinos[0], obb2.orientatinos[2]), //- x1, z2
+		Cross(obb1.orientatinos[1], obb2.orientatinos[0]), //- y1, x2
+		Cross(obb1.orientatinos[1], obb2.orientatinos[1]), //- y1, y2
+		Cross(obb1.orientatinos[1], obb2.orientatinos[2]), //- y1, z2
+		Cross(obb1.orientatinos[2], obb2.orientatinos[0]), //- z1, x2
+		Cross(obb1.orientatinos[2], obb2.orientatinos[1]), //- z1, y2
+		Cross(obb1.orientatinos[2], obb2.orientatinos[2])  //- z1, z2
+	};
+
+
+	///- 
+	for(const auto& axis : axes) {
+		///- obb1の最小値と最大値
+		std::vector<Vec3f> v1 = obb1.GetVertices();
+		float min1 = MinDot(v1, axis);
+		float max1 = MaxDot(v1, axis);
+		float diff1 = max1 - min1;
+		///- obb2の最小値と最大値
+		std::vector<Vec3f> v2 = obb2.GetVertices();
+		float min2 = MinDot(v2, axis);
+		float max2 = MaxDot(v2, axis);
+		float diff2 = max2 - min2;
+
+		///- 差分の合計
+		float sumSpan = diff1 + diff2;
+		///- 二つのオブジェクトの最大値と最小値の差分
+		float longSpan = std::max(max1, max2) - std::min(min1, min2);
+		if(sumSpan < longSpan) {
+			return false;
+		}
+
+	}
+
+
+	return true;
 }

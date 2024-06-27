@@ -33,17 +33,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	OBB obb = {
-		.center = {0.0f, 0.0f, 0.0f},
-		.orientatinos = {},
-		.size = {1.0f, 1.0f, 1.0f},
-		.rotation = {0.0f, 0.0f, 0.0f}
+	OBB obb[2] = {
+		{
+			.center = {0.0f, 0.0f, 0.0f},
+			.orientatinos = {},
+			.size = {0.83f, 0.26f, 0.24f},
+			.rotation = {0.0f, 0.0f, 0.0f}
+		},
+		{
+			.center = {0.9f, 0.66f, 0.78f},
+			.orientatinos = {},
+			.size = {0.5f, 0.37f, 0.5f},
+			.rotation = {-0.05f, -2.49f, 0.15f}
+		},
 	};
 
-	Segment segment = {
-		.origin = {0.0f, 0.0f, 0.0f},
-		.diff = {1.0f, 1.0f, 0.0f}
-	};
+
 
 	uint32_t color = WHITE;
 
@@ -66,13 +71,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		obb.DebugDraw("OBB");
-		obb.CulcOrientations();
-
-		segment.DebugDraw("Segment");
+		obb[0].DebugDraw("OBB1");
+		obb[1].DebugDraw("OBB2");
+		for(uint32_t index = 0; index < 2; ++index) {
+			obb[index].CulcOrientations();
+		}
 
 		color = WHITE;
-		if(IsCollided(obb, segment)) {
+		if(IsCollided(obb[0], obb[1])) {
 			color = RED;
 		}
 
@@ -86,10 +92,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		obb.Draw(camera.get(), color);
-		obb.DrawAxis(camera.get());
-
-		segment.Draw(camera.get(), WHITE);
+		for(uint32_t index = 0; index < 2; ++index) {
+			obb[index].Draw(camera.get(), color);
+			obb[index].DrawAxis(camera.get());
+		}
 
 		///
 		/// ↑描画処理ここまで

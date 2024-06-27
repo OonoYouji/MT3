@@ -33,3 +33,5 @@ bool IsCollided(const OBB& obb, const Sphere& sphere);
 bool IsCollided(const OBB& obb, const Line& line);
 bool IsCollided(const OBB& obb, const Ray& ray);
 bool IsCollided(const OBB& obb, const Segment& segment);
+
+bool IsCollided(const OBB& obb1, const OBB& obb2);
