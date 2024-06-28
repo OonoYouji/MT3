@@ -31,10 +31,10 @@ Vec3f Cross(const Vec3f& v1, const Vec3f& v2);
 
 void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label);
 
-Vec3f Support(const std::vector<Vec3f> vertices, const Vec3f& direction);
+Vec3f Support(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 
-float MaxDot(const std::vector<Vec3f> vertices, const Vec3f& direction);
-float MinDot(const std::vector<Vec3f> vertices, const Vec3f& direction);
+float MaxDot(const std::vector<Vec3f>& vertices, const Vec3f& direction);
+float MinDot(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 
 ///- 加算
 Mat4 Add(const Mat4& m1, const Mat4& m2);
