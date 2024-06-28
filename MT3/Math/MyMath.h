@@ -53,6 +53,8 @@ Vec3f Lerp(const Vec3f& v1, const Vec3f& v2, float t);
 
 Vec3f Bezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, float t);
 
+Vec3f CutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f& c4, float t);
+
 #pragma endregion
 
 
@@ -85,3 +87,6 @@ void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color);
 
 ///- ベジェ曲線の描画
 void DrawBezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Camera* camera, uint32_t color);
+
+///- スプライン曲線の描画
+void DrawCutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f& c4, const Camera* camera, uint32_t color);

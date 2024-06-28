@@ -117,6 +117,15 @@ Vec3f Bezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, float t) {
 	return Lerp(c1c2, c2c3, t);
 }
 
+Vec3f CutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f& c4, float t) {
+	float oneHalf = 1.0f / 2.0f;
+	return Vec3f(
+		(-c1 + (c2 * 3.0f) - (c3 * 3.0f) + c4) * powf(t, 3.0f) +
+		((c1 * 2.0f) - (c2 * 5.0f) + (c3 * 4.0f) - c4) * powf(t, 2.0f) +
+		(-c1 + c3) * t + (c2 * 2.0f)
+	) * oneHalf;
+}
+
 #pragma endregion
 
 #pragma region Matrix4x4用関数
@@ -241,4 +250,40 @@ void DrawBezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Camera*
 		DrawLine(v[0], v[1], color);
 
 	}
+}
+
+void DrawCutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f& c4, const Camera* camera, uint32_t color) {
+
+	/*///- コントロールポイント分
+	for(uint32_t r = 0; r < 4; ++r) {*/
+
+	Vec3f v[2];
+	Matrix4x4 matWorld[2];
+
+	///- 分割数分
+	for(uint32_t c = 0; c < 30; ++c) {
+		float t[2] = {
+			static_cast<float>(c + 0) / 30.0f,
+			static_cast<float>(c + 1) / 30.0f
+		};
+
+		for(uint8_t i = 0; i < 2; ++i) {
+			///- 頂点の計算
+			v[i] = CutmullRom(c1, c2, c3, c4, t[i]);
+			///- 行列の計算
+			matWorld[i] = Mat4::MakeTranslate(v[i]);
+		}
+
+		///- wvpを計算してscreen座標系にする
+		for(uint8_t i = 0; i < 2; ++i) {
+			Matrix4x4 wvpMatrix = matWorld[i] * camera->GetMatVp();
+			Vec3f ndc = Mat4::Transform({ 0.0f,0.0f,0.0f }, wvpMatrix);
+			v[i] = Mat4::Transform(ndc, camera->GetMatViewport());
+		}
+
+		///- 線の描画
+		DrawLine(v[0], v[1], color);
+
+	}
+	//}
 }

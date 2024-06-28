@@ -33,13 +33,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Vec3f controlPoints[3] = {
+	Vec3f controlPoints[4] = {
 		{-0.8f, 0.58f, 1.0f},
 		{1.76f, 1.0f, -0.3f},
-		{0.94f, -0.7f, 2.3f}
+		{0.94f, -0.7f, 2.3f},
+		{-0.53f, -0.26f, -0.15f}
 	};
 
-	Sphere spheres[3] = {
+	Sphere spheres[4] = {
 		{
 			.center = controlPoints[0],
 			.radius = 0.01f,
@@ -55,6 +56,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			.radius = 0.01f,
 			.subdivision = 16
 		},
+		{
+			.center = controlPoints[3],
+			.radius = 0.01f,
+			.subdivision = 16
+		},
+
 	};
 
 	uint32_t color = WHITE;
@@ -79,6 +86,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("v1", &controlPoints[0].x, 0.05f);
 		ImGui::DragFloat3("v2", &controlPoints[1].x, 0.05f);
 		ImGui::DragFloat3("v3", &controlPoints[2].x, 0.05f);
+		ImGui::DragFloat3("v4", &controlPoints[3].x, 0.05f);
 		ImGui::End();
 #endif // _DEBUG
 
@@ -86,7 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///- カメラの更新
 		camera->Update();
 
-		for(uint32_t index = 0; index < 3; ++index) {
+		for(uint32_t index = 0; index < 4; ++index) {
 			spheres[index].center = controlPoints[index];
 		}
 
@@ -101,9 +109,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2], camera.get(), color);
+		DrawCutmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], camera.get(), color);
+		DrawCutmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], camera.get(), color);
+		DrawCutmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[3], camera.get(), color);
+		//DrawCutmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], camera.get(), color);
 
-		for(uint32_t index = 0; index < 3; ++index) {
+		for(uint32_t index = 0; index < 4; ++index) {
 			spheres[index].Draw(camera.get(), BLACK);
 		}
 
