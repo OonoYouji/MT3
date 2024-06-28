@@ -3,6 +3,10 @@
 #include <cmath>
 #include <Novice.h>
 
+#include <Camera.h>
+
+
+#pragma region Vector3用関数
 Vec3f Add(const Vec3f& v1, const Vec3f& v2) {
 	return v1 + v2;
 }
@@ -82,6 +86,41 @@ float MinDot(const std::vector<Vec3f>& vertices, const Vec3f& direction) {
 	return minDot;
 }
 
+Vec3f Project(const Vec3f& v1, const Vec3f& v2) {
+	Vec3f normalizeV2 = Normalize(v2);
+	float dot = Dot(v1, normalizeV2);
+	return normalizeV2 * dot;
+}
+
+Vec3f ClosestPoint(const Vec3f& point, const Segment& segment) {
+	return segment.origin + Project(point - segment.origin, segment.diff);
+}
+
+Vec3f Perpendiculer(const Vec3f& vector) {
+	if(vector.x != 0.0f || vector.y != 0.0f) {
+		return Vec3f(-vector.y, vector.x, 0.0f);
+	}
+	return Vec3f(0.0f, -vector.z, vector.y);
+}
+
+Vec3f Lerp(const Vec3f& v1, const Vec3f& v2, float t) {
+	return Vec3f(
+		std::lerp(v1.x, v2.x, t),
+		std::lerp(v1.y, v2.y, t),
+		std::lerp(v1.z, v2.z, t)
+	);
+}
+
+Vec3f Bezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, float t) {
+	Vec3f c1c2 = Lerp(c1, c2, t);
+	Vec3f c2c3 = Lerp(c2, c3, t);
+	return Lerp(c1c2, c2c3, t);
+}
+
+#pragma endregion
+
+#pragma region Matrix4x4用関数
+
 Mat4 Add(const Mat4& m1, const Mat4& m2) {
 	return m1 + m2;
 }
@@ -159,6 +198,8 @@ void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string&
 		}
 	}
 }
+#pragma endregion
+
 
 void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color) {
 	Novice::DrawLine(
@@ -170,19 +211,34 @@ void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color) {
 	);
 }
 
-Vec3f Project(const Vec3f& v1, const Vec3f& v2) {
-	Vec3f normalizeV2 = Normalize(v2);
-	float dot = Dot(v1, normalizeV2);
-	return normalizeV2 * dot;
-}
 
-Vec3f ClosestPoint(const Vec3f& point, const Segment& segment) {
-	return segment.origin + Project(point - segment.origin, segment.diff);
-}
+void DrawBezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Camera* camera, uint32_t color) {
 
-Vec3f Perpendiculer(const Vec3f& vector) {
-	if(vector.x != 0.0f || vector.y != 0.0f) {
-		return Vec3f(-vector.y, vector.x, 0.0f);
+	Vec3f v[2];
+	Matrix4x4 matWorld[2];
+
+	for(uint32_t index = 0; index < 30; ++index) {
+		float t[2] = {
+			static_cast<float>(index + 0) / 30.0f,
+			static_cast<float>(index + 1) / 30.0f
+		};
+
+		for(uint8_t i = 0; i < 2; ++i) {
+			///- 頂点の計算
+			v[i] = Bezier(c1, c2, c3, t[i]);
+			///- 行列の計算
+			matWorld[i] = Mat4::MakeTranslate(v[i]);
+		}
+
+		///- wvpを計算してscreen座標系にする
+		for(uint8_t i = 0; i < 2; ++i) {
+			Matrix4x4 wvpMatrix = matWorld[i] * camera->GetMatVp();
+			Vec3f ndc = Mat4::Transform({ 0.0f,0.0f,0.0f }, wvpMatrix);
+			v[i] = Mat4::Transform(ndc, camera->GetMatViewport());
+		}
+
+		///- 線の描画
+		DrawLine(v[0], v[1], color);
+
 	}
-	return Vec3f(0.0f, -vector.z, vector.y);
 }

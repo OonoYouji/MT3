@@ -33,22 +33,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	OBB obb[2] = {
-		{
-			.center = {0.0f, 0.0f, 0.0f},
-			.orientatinos = {},
-			.size = {0.83f, 0.26f, 0.24f},
-			.rotation = {0.0f, 0.0f, 0.0f}
-		},
-		{
-			.center = {0.9f, 0.66f, 0.78f},
-			.orientatinos = {},
-			.size = {0.5f, 0.37f, 0.5f},
-			.rotation = {-0.05f, -2.49f, 0.15f}
-		},
+	Vec3f controlPoints[3] = {
+		{-0.8f, 0.58f, 1.0f},
+		{1.76f, 1.0f, -0.3f},
+		{0.94f, -0.7f, 2.3f}
 	};
 
-
+	Sphere spheres[3] = {
+		{
+			.center = controlPoints[0],
+			.radius = 0.01f,
+			.subdivision = 16
+		},
+		{
+			.center = controlPoints[1],
+			.radius = 0.01f,
+			.subdivision = 16
+		},
+		{
+			.center = controlPoints[2],
+			.radius = 0.01f,
+			.subdivision = 16
+		},
+	};
 
 	uint32_t color = WHITE;
 
@@ -67,20 +74,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+#ifdef _DEBUG
+		ImGui::Begin("ControlPoints");
+		ImGui::DragFloat3("v1", &controlPoints[0].x, 0.05f);
+		ImGui::DragFloat3("v2", &controlPoints[1].x, 0.05f);
+		ImGui::DragFloat3("v3", &controlPoints[2].x, 0.05f);
+		ImGui::End();
+#endif // _DEBUG
+
 
 		///- カメラの更新
 		camera->Update();
 
-		obb[0].DebugDraw("OBB1");
-		obb[1].DebugDraw("OBB2");
-		for(uint32_t index = 0; index < 2; ++index) {
-			obb[index].CulcOrientations();
+		for(uint32_t index = 0; index < 3; ++index) {
+			spheres[index].center = controlPoints[index];
 		}
 
-		color = WHITE;
-		if(IsCollided(obb[0], obb[1])) {
-			color = RED;
-		}
 
 		///
 		/// ↑更新処理ここまで
@@ -92,9 +101,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		for(uint32_t index = 0; index < 2; ++index) {
-			obb[index].Draw(camera.get(), color);
-			obb[index].DrawAxis(camera.get());
+		DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2], camera.get(), color);
+
+		for(uint32_t index = 0; index < 3; ++index) {
+			spheres[index].Draw(camera.get(), BLACK);
 		}
 
 		///

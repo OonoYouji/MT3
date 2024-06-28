@@ -8,6 +8,10 @@
 #include "Matrix4x4.h"
 #include "Line.h"
 
+class Camera;
+
+#pragma region Vector3用関数
+
 ///- 加算
 Vec3f Add(const Vec3f& v1, const Vec3f& v2);
 
@@ -36,6 +40,24 @@ Vec3f Support(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 float MaxDot(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 float MinDot(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 
+///- 正射影ベクトル
+Vec3f Project(const Vec3f& v1, const Vec3f& v2);
+
+///- 最近接点を求める
+Vec3f ClosestPoint(const Vec3f& point, const Segment& segment);
+
+Vec3f Perpendiculer(const Vec3f& vector);
+
+///- 線形補完
+Vec3f Lerp(const Vec3f& v1, const Vec3f& v2, float t);
+
+Vec3f Bezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, float t);
+
+#pragma endregion
+
+
+#pragma region Matrix4x4用関数
+
 ///- 加算
 Mat4 Add(const Mat4& m1, const Mat4& m2);
 
@@ -56,17 +78,10 @@ Mat4 MakeIdentity4x4();
 
 ///- 行列のデバッグ表示
 void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string& label);
+#pragma endregion
 
 
 void DrawLine(const Vec3f& v1, const Vec3f& v2, uint32_t color);
 
-
-///- 正射影ベクトル
-Vec3f Project(const Vec3f& v1, const Vec3f& v2);
-
-///- 最近接点を求める
-Vec3f ClosestPoint(const Vec3f& point, const Segment& segment);
-
-
-Vec3f Perpendiculer(const Vec3f& vector);
-
+///- ベジェ曲線の描画
+void DrawBezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Camera* camera, uint32_t color);
