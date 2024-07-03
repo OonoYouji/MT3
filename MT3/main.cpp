@@ -33,38 +33,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Vec3f controlPoints[4] = {
-		{-0.8f, 0.58f, 1.0f},
-		{1.76f, 1.0f, -0.3f},
-		{0.94f, -0.7f, 2.3f},
-		{-0.53f, -0.26f, -0.15f}
+	Vec3f translates[3] = {
+		{0.2f, 1.0f, 0.0f},
+		{0.4f, 0.0f, 0.0f},
+		{0.3f, 0.0f, 0.0f}
 	};
 
-	Sphere spheres[4] = {
-		{
-			.center = controlPoints[0],
-			.radius = 0.01f,
-			.subdivision = 16
-		},
-		{
-			.center = controlPoints[1],
-			.radius = 0.01f,
-			.subdivision = 16
-		},
-		{
-			.center = controlPoints[2],
-			.radius = 0.01f,
-			.subdivision = 16
-		},
-		{
-			.center = controlPoints[3],
-			.radius = 0.01f,
-			.subdivision = 16
-		},
-
+	Vec3f rotates[3] = {
+		{0.0f, 0.0f, -6.8f},
+		{0.0f, 0.0f, -1.4f},
+		{0.0f, 0.0f, 0.0f}
 	};
 
-	uint32_t color = WHITE;
+	Vec3f scales[3] = {
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f}
+	};
+
+	Matrix4x4 worldMatrices[3]{};
+
+	Sphere spheres[3]{
+		{.radius = 0.05f, .subdivision = 16 },
+		{.radius = 0.05f, .subdivision = 16 },
+		{.radius = 0.05f, .subdivision = 16 }
+	};
+
+	uint32_t colors[3]{
+		RED, GREEN, BLUE
+	};
+
+	Vec3f screenPositions[3]{};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -81,22 +80,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-#ifdef _DEBUG
-		ImGui::Begin("ControlPoints");
-		ImGui::DragFloat3("v1", &controlPoints[0].x, 0.05f);
-		ImGui::DragFloat3("v2", &controlPoints[1].x, 0.05f);
-		ImGui::DragFloat3("v3", &controlPoints[2].x, 0.05f);
-		ImGui::DragFloat3("v4", &controlPoints[3].x, 0.05f);
-		ImGui::End();
-#endif // _DEBUG
-
-
 		///- カメラの更新
 		camera->Update();
 
-		for(uint32_t index = 0; index < 4; ++index) {
-			spheres[index].center = controlPoints[index];
+		ImGui::Begin("setting");
+		for(uint32_t index = 0; index < 3; ++index) {
+			if(!ImGui::TreeNodeEx(("Parts" + std::to_string(index)).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+				continue;
+			}
+
+			ImGui::DragFloat3("scale", &scales[index].x, 0.01f);
+			ImGui::DragFloat3("rotate", &rotates[index].x, 0.01f);
+			ImGui::DragFloat3("translate", &translates[index].x, 0.01f);
+
+			ImGui::TreePop();
 		}
+		ImGui::End();
+
+		for(uint32_t index = 0; index < 3; ++index) {
+			worldMatrices[index] = Mat4::MakeAffine(scales[index], rotates[index], translates[index]);
+			if(index != 0) {
+
+				worldMatrices[index] *= worldMatrices[index - 1];
+			}
+			spheres[index].center = Mat4::Transform({ 0.0f,0.0f,0.0f }, worldMatrices[index]);
+			screenPositions[index] = CalcScreenPosition(worldMatrices[index], camera.get());
+		}
+
 
 
 		///
@@ -109,14 +119,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		DrawCutmullRom(controlPoints[0], controlPoints[0], controlPoints[1], controlPoints[2], camera.get(), color);
-		DrawCutmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], camera.get(), color);
-		DrawCutmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[3], camera.get(), color);
-		//DrawCutmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3], camera.get(), color);
-
-		for(uint32_t index = 0; index < 4; ++index) {
-			spheres[index].Draw(camera.get(), BLACK);
+		for(uint32_t index = 0; index < 3; ++index) {
+			spheres[index].Draw(camera.get(), colors[index]);
 		}
+
+		DrawLine(screenPositions[0], screenPositions[1], WHITE);
+		DrawLine(screenPositions[1], screenPositions[2], WHITE);
 
 		///
 		/// ↑描画処理ここまで

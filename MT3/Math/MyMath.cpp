@@ -126,6 +126,11 @@ Vec3f CutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f&
 	) * oneHalf;
 }
 
+Vec3f CalcScreenPosition(const Matrix4x4& worldMatrix, const Camera* camera) {
+	Vec3f ndc = Mat4::Transform({ 0.0f,0.0f,0.0f }, worldMatrix * camera->GetMatVp());
+	return Mat4::Transform(ndc, camera->GetMatViewport());
+}
+
 #pragma endregion
 
 #pragma region Matrix4x4用関数

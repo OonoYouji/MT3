@@ -55,6 +55,8 @@ Vec3f Bezier(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, float t);
 
 Vec3f CutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f& c4, float t);
 
+Vec3f CalcScreenPosition(const Matrix4x4& worldMatrix, const Camera* camera);
+
 #pragma endregion
 
 
