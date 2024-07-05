@@ -18,6 +18,25 @@
 #include "OBB.h"
 #include "Collision.h"
 
+
+
+struct Spring {
+	Vec3f anchor;				///- アンカー、固定された端の位置
+	float naturalLength;		///- 自然潮
+	float stiffness;			///- 剛性、バネ定数k
+	float dampingCoefficient;	///- 減衰係数
+};
+
+struct Ball {
+	Vec3f position;		///- 位置
+	Vec3f velocity;		///- 速度
+	Vec3f acceleration;	///- 加速度
+	float mass;			///- 質量
+	float radius;		///- 半径
+	uint32_t color;		///- 色
+};
+
+
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -33,16 +52,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Vec3f a{ 0.2f, 1.0f, 0.0f };
-	Vec3f b{ 2.4f, 3.1f, 1.2f };
-	Vec3f c = a + b;
-	Vec3f d = a - b;
-	Vec3f e = a * 2.4f;
-	Vec3f rotate{0.4f, 1.43f, -0.8f};
-	Matrix4x4 rotateXMatrix = Mat4::MakeRotateX(rotate.x);
-	Matrix4x4 rotateYMatrix = Mat4::MakeRotateY(rotate.y);
-	Matrix4x4 rotateZMatrix = Mat4::MakeRotateZ(rotate.z);
-	Matrix4x4 rotateMatrix = rotateXMatrix * rotateYMatrix * rotateZMatrix;
+	Spring spring{
+		.anchor = {0.0f,0.0f,0.0f},
+		.naturalLength = 1.0f,
+		.stiffness = 100.0f,
+		.dampingCoefficient = 2.0f
+	};
+
+	Ball ball{
+		.position = {1.2f, 0.0f, 0.0f},
+		.mass = 2.0f,
+		.radius = 0.05f,
+		.color = BLUE
+	};
+
+	///- 1frame当たりの時間
+	float deltaTime = 1.0f / 60.0f;
+
+
+	Sphere sphere{
+		.radius = 0.05f,
+		.subdivision = 16
+	};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -59,28 +90,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-
-#ifdef _DEBUG
-		ImGui::Begin("window");
-
-		VectorImGuiText("c", c);
-		VectorImGuiText("d", d);
-		VectorImGuiText("e", e);
-
-		ImGui::Separator();
-
-		MatrixImGuiText("matrix", rotateMatrix);
-
+		ImGui::Begin("setting");
+		if(ImGui::Button("start")) {
+			ball.position = { 1.2f, 0.0f, 0.0f };
+		}
 		ImGui::End();
-#endif // _DEBUG
-
-
 
 		///- カメラの更新
 		camera->Update();
 
+		/// =========================================
+		/// バネの更新
+		/// =========================================
 
+		///- 差分
+		Vec3f diff = ball.position - spring.anchor;
+		float length = Length(diff);
+		if(length != 0.0f) {
+			///- 向き
+			Vec3f direction = Normalize(diff);
 
+			///- 伸びきったときの座標
+			Vec3f restPosition = spring.anchor + (direction * spring.naturalLength);
+
+			///- 変位ベクトル
+			Vec3f displacement = (ball.position - restPosition) * length;
+
+			///- 復元力
+			Vec3f restoringForce = displacement * -spring.stiffness;
+			///- 減衰力
+			Vec3f dampingForce = ball.velocity * -spring.dampingCoefficient;
+			///- 最終的な力
+			Vec3f force = restoringForce + dampingForce;
+
+			ball.acceleration = force / ball.mass;
+
+		}
+
+		ball.velocity += ball.acceleration * deltaTime;
+		ball.position += ball.velocity * deltaTime;
+
+		sphere.center = ball.position;
 
 		///
 		/// ↑更新処理ここまで
@@ -91,6 +141,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		Grid::GetInstance()->Draw(*camera.get());
+
+		sphere.Draw(camera.get(), ball.color);
+		DrawLine(
+			CalcScreenPosition(Mat4::MakeTranslate(sphere.center), camera.get()),
+			CalcScreenPosition(Mat4::MakeTranslate(spring.anchor), camera.get()),
+			WHITE
+		);
 
 
 		///
