@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	camera->Init();
 
 	Spring spring{
-		.anchor = {0.0f,0.0f,0.0f},
+		.anchor = {0.0f,1.0f,0.0f},
 		.naturalLength = 1.0f,
 		.stiffness = 100.0f,
 		.dampingCoefficient = 2.0f
@@ -68,12 +68,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	///- 1frame当たりの時間
 	float deltaTime = 1.0f / 60.0f;
-
+	const Vec3f kGravity = { 0.0f, -9.8f, 0.0f };
 
 	Sphere sphere{
 		.radius = 0.05f,
 		.subdivision = 16
 	};
+
+	Vec3f startPos = {};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -91,8 +93,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		ImGui::Begin("setting");
+		ImGui::DragFloat3("startPos", &startPos.x, 0.01f);
 		if(ImGui::Button("start")) {
-			ball.position = { 1.2f, 0.0f, 0.0f };
+			ball.position = startPos;
 		}
 		ImGui::End();
 
@@ -128,6 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		ball.velocity += ball.acceleration * deltaTime;
+		ball.velocity += kGravity * deltaTime;
 		ball.position += ball.velocity * deltaTime;
 
 		sphere.center = ball.position;
