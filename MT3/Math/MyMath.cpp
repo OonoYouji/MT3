@@ -4,19 +4,22 @@
 #include <Novice.h>
 
 #include <Camera.h>
+#include <ImGuiManager.h>
 
 
 #pragma region Vector3用関数
+
+
 Vec3f Add(const Vec3f& v1, const Vec3f& v2) {
-	return v1 + v2;
+	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
 
 Vec3f Subtract(const Vec3f& v1, const Vec3f& v2) {
-	return v1 - v2;
+	return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z };
 }
 
 Vec3f Multiply(float scaler, const Vec3f& v) {
-	return v * scaler;
+	return { v.x * scaler, v.y * scaler, v.z * scaler };
 }
 
 float Dot(const Vec3f& v1, const Vec3f& v2) {
@@ -49,6 +52,10 @@ void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label
 	Novice::ScreenPrintf(static_cast<int>(pos.x) + kColumnWidth * 1, static_cast<int>(pos.y), "%0.2f", vector.y);
 	Novice::ScreenPrintf(static_cast<int>(pos.x) + kColumnWidth * 2, static_cast<int>(pos.y), "%0.2f", vector.z);
 	Novice::ScreenPrintf(static_cast<int>(pos.x) + kColumnWidth * 3, static_cast<int>(pos.y), "%s", label);
+}
+
+void VectorImGuiText(const std::string& label, const Vec3f& v) {
+	ImGui::Text((label + std::string(": %f, %f, %f")).c_str(), v.x, v.y, v.z);
 }
 
 Vec3f Support(const std::vector<Vec3f>& vertices, const Vec3f& direction) {
@@ -211,6 +218,14 @@ void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string&
 			);
 		}
 	}
+}
+void MatrixImGuiText(const std::string& label, const Mat4& m) {
+	ImGui::Text((label + std::string(":\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n")).c_str(),
+				m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3],
+				m.m[1][0], m.m[1][1], m.m[1][2], m.m[1][3],
+				m.m[2][0], m.m[2][1], m.m[2][2], m.m[2][3],
+				m.m[3][0], m.m[3][1], m.m[3][2], m.m[3][3]
+	);
 }
 #pragma endregion
 

@@ -127,6 +127,7 @@ xcopy C:\KamataEngine\DirectXGame\Resources "$(OutDirFullPath)NoviceResources" /
     <ClCompile Include="math\MyMath.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="Math\Triangle.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3D\AABB.h" />

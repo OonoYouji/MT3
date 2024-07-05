@@ -35,6 +35,8 @@ Vec3f Cross(const Vec3f& v1, const Vec3f& v2);
 
 void VectorScreenPrintf(const Vec2f& pos, const Vec3f& vector, const char* label);
 
+void VectorImGuiText(const std::string& label, const Vec3f& v);
+
 Vec3f Support(const std::vector<Vec3f>& vertices, const Vec3f& direction);
 
 float MaxDot(const std::vector<Vec3f>& vertices, const Vec3f& direction);
@@ -82,6 +84,9 @@ Mat4 MakeIdentity4x4();
 
 ///- 行列のデバッグ表示
 void MatrixScreenPrintf(const Vec2f& pos, const Mat4& matrix, const std::string& label);
+
+void MatrixImGuiText(const std::string& label, const Mat4& m);
+
 #pragma endregion
 
 
