@@ -62,9 +62,6 @@
     <ClCompile Include="math\MyMath.cpp">
       <Filter>source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\Matrix4x4.cpp">
-      <Filter>source\Math</Filter>
-    </ClCompile>
     <ClCompile Include="collision\Collision.cpp">
       <Filter>source\collision</Filter>
     </ClCompile>
@@ -92,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="3D\OBB.cpp">
       <Filter>source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector3.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\KamataEngine\DirectXGame\math\Matrix4x4.cpp">
+      <Filter>KamataEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
