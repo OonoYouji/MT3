@@ -19,6 +19,14 @@
 #include "OBB.h"
 #include "Collision.h"
 
+struct Pendulum {
+	Vec3f anchor;
+	float length;
+	float angle;
+	float angularVelocity;
+	float angularAcceleration;
+};
+
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
@@ -41,14 +49,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.subdivision = 16
 	};
 
-	Vec3f center{};
-	float radius = 0.8f;
+	Pendulum pendulum{
+		.anchor = {0.0f, 1.0f, 0.0f},
+		.length = 0.8f,
+		.angle = 0.7f,
+		.angularVelocity = 0.0f,
+		.angularAcceleration = 0.0f
+	};
 
-	float angularVelocity = std::numbers::pi_v<float>;
-	float angle = 0.0f;
-	float deltaTime = 1.0f / 60.0f;
 
 	bool isStart = false;
+	float deltaTime = 1.0f / 60.0f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -78,12 +89,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if(isStart) {
 
-			angle += angularVelocity * deltaTime;
+			pendulum.angularAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
+			pendulum.angularVelocity += pendulum.angularAcceleration * deltaTime;
+			pendulum.angle += pendulum.angularVelocity * deltaTime;
 
 			sphere.center = {
-				center.x + radius * std::cos(angle),
-				center.y + radius * std::sin(angle),
-				0.0f
+				pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length,
+				pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length,
+				pendulum.anchor.z
 			};
 
 		}
@@ -99,6 +112,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Grid::GetInstance()->Draw(*camera.get());
 
 		sphere.Draw(camera.get(), WHITE);
+
+		DrawLine(
+			CalcScreenPosition(Mat4::MakeTranslate(sphere.center), camera.get()),
+			CalcScreenPosition(Mat4::MakeTranslate(pendulum.anchor), camera.get()),
+			WHITE
+		);
 
 		///
 		/// ↑描画処理ここまで
