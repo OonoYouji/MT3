@@ -138,6 +138,10 @@ Vec3f CalcScreenPosition(const Matrix4x4& worldMatrix, const Camera* camera) {
 	return Mat4::Transform(ndc, camera->GetMatViewport());
 }
 
+Vec3f Reflect(const Vec3f& input, const Vec3f& normal) {
+	return input - 2.0f * Project(input, normal) * normal;
+}
+
 #pragma endregion
 
 #pragma region Matrix4x4用関数

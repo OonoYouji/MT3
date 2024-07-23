@@ -19,12 +19,14 @@
 #include "OBB.h"
 #include "Collision.h"
 
-struct ConicalPendulum {
-	Vec3f anchor;
-	float length;
-	float halfApexAngle;
-	float angle;
-	float angularVelocity;
+
+struct Ball {
+	Vec3f position;
+	float mass;
+	float radius;
+	uint32_t color;
+	Vec3f velocity;
+	Vec3f acceleraion;
 };
 
 
@@ -43,23 +45,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::unique_ptr<Camera> camera = std::make_unique<Camera>();
 	camera->Init();
 
-	Sphere sphere{
-		.center = {},
-		.radius = 0.05f,
-		.subdivision = 16
+
+	Plane plane{
+		.normal = Normalize(Vec3f(-0.2f, 0.9f, -0.3f)),
+		.distance = 0.0f
 	};
 
-	ConicalPendulum conicalPendulum{
-		.anchor = {0.0f, 1.0f, 0.0f},
-		.length = 0.8f,
-		.halfApexAngle = 0.7f,
-		.angle = 0.0f,
-		.angularVelocity = 0.0f,
+	Ball ball{
+		.position = Vec3f(0.8f, 1.2f, 0.3f),
+		.mass = 2.0f,
+		.radius = 0.05f,
+		.color = WHITE,
+		.velocity = {},
+		.acceleraion = Vec3f(0.0f, -9.8f, 0.0f)
+	};
+
+	Sphere sphere{
+		.center = ball.position,
+		.radius = ball.radius,
+		.subdivision = 16
 	};
 
 
 	bool isStart = false;
 	float deltaTime = 1.0f / 60.0f;
+
+	float e = 1.0f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -77,31 +88,50 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		ImGui::Begin("setting");
-		//ImGui::DragFloat3("center", &center.x, 0.01f);
 		if(ImGui::Button("Start Button")) {
 			isStart = true;
 		}
 
+		if(ImGui::Button("Reset Button")) {
+			isStart = false;
+
+			ball.position = Vec3f(0.8f, 1.2f, 0.3f);
+			ball.mass = 2.0f;
+			ball.radius = 0.05f;
+			ball.color = WHITE;
+			ball.velocity = {};
+			ball.acceleraion = Vec3f(0.0f, -9.8f, 0.0f);
+		}
+
+		ImGui::Separator();
+
+		ImGui::DragFloat("e", &e, 0.01f);
+
 		ImGui::End();
+
+
 
 		///- カメラの更新
 		camera->Update();
 
+
+
 		if(isStart) {
 
-			conicalPendulum.angularVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
-			conicalPendulum.angle += conicalPendulum.angularVelocity * deltaTime;
+			ball.velocity += ball.acceleraion * deltaTime;
+			ball.position += ball.velocity * deltaTime;
 
-			float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
-			float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 
-			sphere.center = {
-				conicalPendulum.anchor.x + std::sin(conicalPendulum.angle) * radius,
-				conicalPendulum.anchor.y - height,
-				conicalPendulum.anchor.z - std::cos(conicalPendulum.angle) * radius
-			};
+			if(IsCollided(Sphere{ .center = ball.position, .radius = ball.radius }, plane)) {
+				Vec3f reflected = Reflect(ball.velocity, plane.normal);
+				Vec3f projectToNormal= Project(reflected, plane.normal);
+				Vec3f movingDirection = reflected = projectToNormal;
+				ball.velocity = projectToNormal * e + movingDirection;
+			}
 
 		}
+
+		sphere.center = ball.position;
 
 		///
 		/// ↑更新処理ここまで
@@ -113,13 +143,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Grid::GetInstance()->Draw(*camera.get());
 
-		sphere.Draw(camera.get(), WHITE);
+		plane.Draw(camera.get());
 
-		DrawLine(
-			CalcScreenPosition(Mat4::MakeTranslate(sphere.center), camera.get()),
-			CalcScreenPosition(Mat4::MakeTranslate(conicalPendulum.anchor), camera.get()),
-			WHITE
-		);
+		sphere.Draw(camera.get(), ball.color);
+
 
 		///
 		/// ↑描画処理ここまで

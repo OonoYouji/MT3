@@ -59,6 +59,8 @@ Vec3f CutmullRom(const Vec3f& c1, const Vec3f& c2, const Vec3f& c3, const Vec3f&
 
 Vec3f CalcScreenPosition(const Matrix4x4& worldMatrix, const Camera* camera);
 
+Vec3f Reflect(const Vec3f& input, const Vec3f& normal);
+
 #pragma endregion
 
 
