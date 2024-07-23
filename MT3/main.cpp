@@ -19,12 +19,12 @@
 #include "OBB.h"
 #include "Collision.h"
 
-struct Pendulum {
+struct ConicalPendulum {
 	Vec3f anchor;
 	float length;
+	float halfApexAngle;
 	float angle;
 	float angularVelocity;
-	float angularAcceleration;
 };
 
 
@@ -49,12 +49,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.subdivision = 16
 	};
 
-	Pendulum pendulum{
+	ConicalPendulum conicalPendulum{
 		.anchor = {0.0f, 1.0f, 0.0f},
 		.length = 0.8f,
-		.angle = 0.7f,
+		.halfApexAngle = 0.7f,
+		.angle = 0.0f,
 		.angularVelocity = 0.0f,
-		.angularAcceleration = 0.0f
 	};
 
 
@@ -89,14 +89,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if(isStart) {
 
-			pendulum.angularAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
-			pendulum.angularVelocity += pendulum.angularAcceleration * deltaTime;
-			pendulum.angle += pendulum.angularVelocity * deltaTime;
+			conicalPendulum.angularVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
+			conicalPendulum.angle += conicalPendulum.angularVelocity * deltaTime;
+
+			float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
+			float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 
 			sphere.center = {
-				pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length,
-				pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length,
-				pendulum.anchor.z
+				conicalPendulum.anchor.x + std::sin(conicalPendulum.angle) * radius,
+				conicalPendulum.anchor.y - height,
+				conicalPendulum.anchor.z - std::cos(conicalPendulum.angle) * radius
 			};
 
 		}
@@ -115,7 +117,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawLine(
 			CalcScreenPosition(Mat4::MakeTranslate(sphere.center), camera.get()),
-			CalcScreenPosition(Mat4::MakeTranslate(pendulum.anchor), camera.get()),
+			CalcScreenPosition(Mat4::MakeTranslate(conicalPendulum.anchor), camera.get()),
 			WHITE
 		);
 
