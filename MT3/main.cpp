@@ -29,6 +29,10 @@ struct Ball {
 	Vec3f acceleraion;
 };
 
+struct Capsule {
+	Segment segment;
+	float radius;
+};
 
 const char kWindowTitle[] = "LE2A_05_オオノ_ヨウジ_MT3";
 
@@ -66,11 +70,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.subdivision = 16
 	};
 
+	Capsule capsule{
+		.segment{},
+		.radius = ball.radius
+	};
+
 
 	bool isStart = false;
 	float deltaTime = 1.0f / 60.0f;
 
 	float e = 1.0f;
+	const uint32_t kMaxIndex = 30;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
@@ -107,6 +117,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::DragFloat("e", &e, 0.01f);
 
+		ImGui::Separator();
+
+		if(ImGui::TreeNodeEx("Ball", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+			ImGui::Text("Position : %.2f, %.2f, %.2f", ball.position.x, ball.position.y, ball.position.z);
+			ImGui::Text("Velocity : %.2f, %.2f, %.2f", ball.velocity.x, ball.velocity.y, ball.velocity.z);
+
+			ImGui::TreePop();
+		}
+
 		ImGui::End();
 
 
@@ -118,15 +138,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if(isStart) {
 
+
 			ball.velocity += ball.acceleraion * deltaTime;
 			ball.position += ball.velocity * deltaTime;
 
+			capsule.segment.origin = ball.position;
+			capsule.segment.diff = ball.velocity * deltaTime;
 
-			if(IsCollided(Sphere{ .center = ball.position, .radius = ball.radius }, plane)) {
-				Vec3f reflected = Reflect(ball.velocity, plane.normal);
-				Vec3f projectToNormal= Project(reflected, plane.normal);
-				Vec3f movingDirection = reflected = projectToNormal;
-				ball.velocity = projectToNormal * e + movingDirection;
+
+			for(uint32_t i = 0; i < kMaxIndex; ++i) {
+
+				Vec3f position = Lerp(capsule.segment.origin, capsule.segment.origin + capsule.segment.diff, float(i) / float(kMaxIndex));
+				if(IsCollided(Sphere{ .center = position, .radius = capsule.radius }, plane)) {
+					Vec3f reflected = Reflect(ball.velocity, plane.normal);
+					Vec3f projectToNormal = Project(reflected, plane.normal);
+					Vec3f movingDirection = reflected = projectToNormal;
+					ball.velocity = projectToNormal * e + movingDirection;
+					ball.position = position;
+					break;
+				}
 			}
 
 		}
