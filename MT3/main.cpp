@@ -82,6 +82,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float e = 1.0f;
 	const uint32_t kMaxIndex = 30;
 
+	Vec3f startPos = ball.position;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while(Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -105,7 +107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if(ImGui::Button("Reset Button")) {
 			isStart = false;
 
-			ball.position = Vec3f(0.8f, 1.2f, 0.3f);
+			ball.position = startPos;
 			ball.mass = 2.0f;
 			ball.radius = 0.05f;
 			ball.color = WHITE;
@@ -120,6 +122,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Separator();
 
 		if(ImGui::TreeNodeEx("Ball", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+			ImGui::DragFloat3("start position", &startPos.x, 0.01f);
+			
+			ImGui::Separator();
 
 			ImGui::Text("Position : %.2f, %.2f, %.2f", ball.position.x, ball.position.y, ball.position.z);
 			ImGui::Text("Velocity : %.2f, %.2f, %.2f", ball.velocity.x, ball.velocity.y, ball.velocity.z);
